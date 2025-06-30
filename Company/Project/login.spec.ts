@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 
 test('login workflow', async ({ page }) => {
   // 1️⃣ Go to the login page
-  await page.goto('https://example.com/login');
+  await page.goto('https://www.google.com/');
   
   // 2️⃣ Fill in credentials (replace with real selectors/user-data)
   await page.getByLabel('Username').fill(process.env.TEST_USER as string);
