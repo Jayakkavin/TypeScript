@@ -1,104 +1,85 @@
 import { test, expect, chromium } from "@playwright/test";
 
-test("Saucedemo Workflow", async () => {
+test("SauceDemo Workflow", async () => {
   const browser = await chromium.launch({ headless: false });
   const context = await browser.newContext();
   const page = await context.newPage();
 
-  // Helper function to perform actions with retries and fallbacks
-  async function performAction(action: string, selector: string, value: string | null, retry: number, fallbacks: string[], errorMessage: string) {
-    let attempts = 0;
-    let lastError: Error | null = null;
-
-    while (attempts <= retry) {
-      attempts++;
+  async function performAction(action: string, selector: string, value: string | null, waitTimeoutMs: number, retry: number, fallbacks: string[], errorMessage: string) {
+    for (let i = 0; i <= retry; i++) {
       try {
-        let currentSelector = selector;
-        if (attempts > 1 && fallbacks.length > 0) {
-          currentSelector = fallbacks[attempts - 2] || selector;
-        }
-
         switch (action) {
-          case "goto":
-            await page.goto(currentSelector, { waitUntil: 'networkidle' });
+          case "navigate":
+            await page.goto(selector, { waitUntil: 'networkidle' });
             break;
-          case "type":
-            await page.locator(currentSelector).fill(value!);
+          case "fill":
+            await page.locator(selector).waitFor({ state: 'visible', timeout: waitTimeoutMs });
+            await page.locator(selector).fill(value!);
             break;
           case "click":
-            await page.locator(currentSelector).click();
+            await page.locator(selector).waitFor({ state: 'visible', timeout: waitTimeoutMs });
+            await page.locator(selector).click();
             break;
           case "check":
-            await page.locator(currentSelector).check();
+            await page.locator(selector).waitFor({ state: 'visible', timeout: waitTimeoutMs });
+            await page.locator(selector).check();
             break;
-          case "waitForSelector":
-            await page.locator(currentSelector).waitFor({ timeout: 5000 });
+          case "expect":
+            await page.locator(selector).waitFor({ state: 'visible', timeout: waitTimeoutMs });
+            await expect(page.locator(selector)).toContainText(value!);
             break;
+          default:
+            throw new Error(`Unknown action: ${action}`);
         }
-        return; // Success, exit the loop
-      } catch (error: any) {
-        lastError = new Error(`${errorMessage} Attempt ${attempts}: ${error.message}`);
-        console.error(lastError.message);
+        return; // Success, exit the retry loop
+      } catch (error) {
+        console.error(`Attempt ${i + 1} failed for action ${action} on selector ${selector}: ${error}`);
+        if (i === retry) {
+          console.error(`All retries failed for action ${action} on selector ${selector}`);
+          throw new Error(`${errorMessage}: ${error}`);
+        }
+
+        if (fallbacks.includes("scrollIntoView")) {
+          try {
+            await page.locator(selector).scrollIntoViewIfNeeded();
+          } catch (scrollError) {
+            console.warn(`Scroll into view failed: ${scrollError}`);
+          }
+        }
+        if (fallbacks.includes("waitForLoadState")) {
+          try {
+            await page.waitForLoadState();
+          } catch (loadStateError) {
+            console.warn(`waitForLoadState failed: ${loadStateError}`);
+          }
+        }
+        // Wait before retrying
+        await page.waitForTimeout(500);
       }
     }
-    throw lastError; // Throw the last error if all retries failed
   }
 
   try {
-    // Step 1: Navigate to saucedemo
-    await performAction("goto", "https://www.saucedemo.com/", null, 0, [], "Navigation to saucedemo failed.");
+    await performAction("navigate", "https://www.saucedemo.com/", null, 5000, 3, ["waitForLoadState"], "Failed to navigate to the login page");
+    await performAction("fill", "[data-test='username']", "standard_user", 5000, 3, ["scrollIntoView"], "Failed to enter username");
+    await performAction("fill", "[data-test='password']", "secret_sauce", 5000, 3, ["scrollIntoView"], "Failed to enter password");
+    await performAction("click", "[data-test='login-button']", null, 5000, 3, ["scrollIntoView"], "Failed to click login button");
+    await performAction("click", ".product_sort_container", null, 5000, 3, [], "Failed to click product sort filter");
+    await performAction("click", "option[value='za']", null, 5000, 3, [], "Failed to select Name (Z to A)");
+    await performAction("click", "[data-test='add-to-cart-sauce-labs-backpack']", null, 5000, 3, ["scrollIntoView"], "Failed to add Sauce Labs Backpack to cart");
+    await performAction("click", "[data-test='shopping-cart-link']", null, 5000, 3, [], "Failed to click cart icon");
+    await performAction("expect", "[data-test='inventory-item-name']", "Sauce Labs Backpack", 5000, 3, [], "Sauce Labs Backpack is not present in the cart");
+    await performAction("click", "[data-test='checkout']", null, 5000, 3, [], "Failed to click checkout button");
+    await performAction("fill", "[data-test='firstName']", "chaitanya", 5000, 3, ["scrollIntoView"], "Failed to enter first name");
+    await performAction("fill", "[data-test='lastName']", "Kompella", 5000, 3, ["scrollIntoView"], "Failed to enter last name");
+    await performAction("fill", "[data-test='postalCode']", "62567352", 5000, 3, ["scrollIntoView"], "Failed to enter postal code");
+    await performAction("click", "[data-test='continue']", null, 5000, 3, [], "Failed to click continue button");
+    await performAction("click", "[data-test='finish']", null, 5000, 3, [], "Failed to click finish button");
+    await performAction("expect", ".complete-header", "Thank you for your order!", 5000, 3, [], "Confirmation message is not displayed");
+    await performAction("click", "[data-test='back-to-products']", null, 5000, 3, [], "Failed to click back to home button");
+    await performAction("click", "#react-burger-menu-btn", null, 5000, 3, [], "Failed to click burger bar");
+    await performAction("click", "#logout_sidebar_link", null, 5000, 3, [], "Failed to click logout");
 
-    // Step 2: Enter username
-    await performAction("type", "[data-test=\"username\"]", "standard_user", 3, ["#user-name", "[name=\"user-name\"]"], "Failed to enter username.");
-
-    // Step 3: Enter password
-    await performAction("type", "[data-test=\"password\"]", "secret_sauce", 3, ["#password", "[name=\"password\"]"], "Failed to enter password.");
-
-    // Step 4: Click login button
-    await performAction("click", "[data-test=\"login-button\"]", null, 3, ["#login-button", "[name=\"login-button\"]"], "Login button click failed.");
-
-    // Step 5: Add to cart
-    await performAction("click", "[data-test=\"add-to-cart-sauce-labs-backpack\"]", null, 3, ["#add-to-cart-sauce-labs-backpack", "text=Add to cart"], "Add to cart failed for Sauce Labs Backpack.");
-
-    // Step 6: Click shopping cart link
-    await performAction("click", "[data-test=\"shopping-cart-link\"]", null, 3, [], "Failed to click the cart icon.");
-
-    // Step 7: Wait for product in cart
-    await performAction("waitForSelector", "[data-test=\"inventory-item-name\"]:has-text('Sauce Labs Backpack')", null, 3, [], "Product not found in cart.");
-
-    // Step 8: Click checkout
-    await performAction("click", "[data-test=\"checkout\"]", null, 3, ["#checkout", "[name=\"checkout\"]"], "Checkout button click failed.");
-
-    // Step 9: Enter first name
-    await performAction("type", "[data-test=\"firstName\"]", "chaitanya", 3, ["#first-name", "[name=\"firstName\"]"], "Failed to enter first name.");
-
-    // Step 10: Enter last name
-    await performAction("type", "[data-test=\"lastName\"]", "Kompella", 3, ["#last-name", "[name=\"lastName\"]"], "Failed to enter last name.");
-
-    // Step 11: Enter postal code
-    await performAction("type", "[data-test=\"postalCode\"]", "62567352", 3, ["#postal-code", "[name=\"postalCode\"]"], "Failed to enter postal code.");
-
-    // Step 12: Click continue
-    await performAction("click", "[data-test=\"continue\"]", null, 3, ["#continue", "[name=\"continue\"]"], "Continue button click failed.");
-
-    // Step 13: Click finish
-    await performAction("click", "[data-test=\"finish\"]", null, 3, ["#finish", "[name=\"finish\"]"], "Finish button click failed.");
-
-    // Step 14: Wait for confirmation
-    await performAction("waitForSelector", "text=Thank you for your order!", null, 3, [], "Confirmation message not found.");
-
-    // Step 15: Back to home
-    await performAction("click", "[data-test=\"back-to-products\"]", null, 3, ["text=Back to products"], "Back to home button click failed.");
-
-    // Step 16: Click burger bar
-    await performAction("click", "#react-burger-menu-btn", null, 3, [], "Burger bar click failed.");
-
-    // Step 17: Logout
-    await performAction("click", "#logout_sidebar_link", null, 3, [], "Logout failed.");
-
-  } catch (error: any) {
-    console.error("Test failed:", error.message);
-    throw error; // Exit with a clear error
   } finally {
     await browser.close();
   }
