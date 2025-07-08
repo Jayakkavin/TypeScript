@@ -1,304 +1,171 @@
-import { test, expect } from "@playwright/test";
+import { test, expect, chromium } from "@playwright/test";
 
-test("SauceDemo Workflow", async ({ page }) => {
-  // Step 1: Navigate to the Saucedemo website
-  const gotoSelector = "https://www.saucedemo.com/";
-  const gotoErrorMessage = "Failed to navigate to https://www.saucedemo.com/";
-  for (let i = 0; i < 3; i++) {
-    try {
-      await page.goto(gotoSelector, { waitUntil: 'networkidle' , timeout: 5000});
-      break;
-    } catch (error) {
-      console.error(`Attempt ${i + 1} failed: ${gotoErrorMessage}`, error);
-      if (i === 2) {
-        throw new Error(gotoErrorMessage);
-      }
-    }
+test("Saucedemo Test", async () => {
+  const browser = await chromium.launch({ headless: false });
+  const context = await browser.newContext();
+  const page = await context.newPage();
+
+  // 1. Navigate to https://www.saucedemo.com/
+  try {
+    await page.goto("https://www.saucedemo.com/", { waitUntil: 'networkidle' });
+  } catch (error) {
+    console.error("Failed to navigate to https://www.saucedemo.com/:", error);
+    throw new Error("Failed to navigate to https://www.saucedemo.com/");
   }
 
-  // Step 2: Fill username field
-  const usernameSelector = "[data-test=\"username\"]";
-  const usernameValue = "standard_user";
-  const usernameErrorMessage = `Failed to fill username field with '${usernameValue}'`;
-  for (let i = 0; i < 3; i++) {
-    try {
-      await page.locator(usernameSelector).waitFor({ timeout: 5000 });
-      await page.locator(usernameSelector).fill(usernameValue, { timeout: 5000 });
-      break;
-    } catch (error) {
-      console.error(`Attempt ${i + 1} failed: ${usernameErrorMessage}`, error);
-      if (i === 2) {
-        throw new Error(usernameErrorMessage);
-      }
-    }
+  // 2. Enter "standard_user" in the username field.
+  try {
+    await page.locator('[data-test="username"]').fill('standard_user', { timeout: 5000, retries: 3 });
+  } catch (error) {
+    console.error("Failed to enter username:", error);
+    throw new Error("Failed to enter username");
   }
 
-  // Step 3: Fill password field
-  const passwordSelector = "[data-test=\"password\"]";
-  const passwordValue = "secret_sauce";
-  const passwordErrorMessage = `Failed to fill password field with '${passwordValue}'`;
-  for (let i = 0; i < 3; i++) {
-    try {
-      await page.locator(passwordSelector).waitFor({ timeout: 5000 });
-      await page.locator(passwordSelector).fill(passwordValue, { timeout: 5000 });
-      break;
-    } catch (error) {
-      console.error(`Attempt ${i + 1} failed: ${passwordErrorMessage}`, error);
-      if (i === 2) {
-        throw new Error(passwordErrorMessage);
-      }
-    }
+  // 3. Enter "secret_sauce" in the password field.
+  try {
+    await page.locator('[data-test="password"]').fill('secret_sauce', { timeout: 5000, retries: 3 });
+  } catch (error) {
+    console.error("Failed to enter password:", error);
+    throw new Error("Failed to enter password");
   }
 
-  // Step 4: Click the Login button
-  const loginButtonSelector = "[data-test=\"login-button\"]";
-  const loginButtonErrorMessage = "Failed to click the Login button";
-  for (let i = 0; i < 3; i++) {
-    try {
-      await page.locator(loginButtonSelector).waitFor({ timeout: 5000 });
-      await page.locator(loginButtonSelector).click({ timeout: 5000 });
-      await page.waitForLoadState('networkidle');
-      break;
-    } catch (error) {
-      console.error(`Attempt ${i + 1} failed: ${loginButtonErrorMessage}`, error);
-      if (i === 2) {
-        throw new Error(loginButtonErrorMessage);
-      }
-    }
+  // 4. Click the Login button.
+  try {
+    await page.locator('[data-test="login-button"]').click({ timeout: 5000, retries: 3 });
+    await page.waitForLoadState('networkidle');
+  } catch (error) {
+    console.error("Failed to click login button:", error);
+    throw new Error("Failed to click login button");
   }
 
-  // Step 5: Click the Add to Cart button for 'Sauce Labs Backpack'
-  const addToCartSelector = "[data-test=\"add-to-cart-sauce-labs-backpack\"]";
-  const addToCartErrorMessage = "Failed to click the Add to Cart button for 'Sauce Labs Backpack'";
-  for (let i = 0; i < 3; i++) {
-    try {
-      await page.locator(addToCartSelector).waitFor({ timeout: 5000 });
-      await page.locator(addToCartSelector).click({ timeout: 5000 });
-      break;
-    } catch (error) {
-      console.error(`Attempt ${i + 1} failed: ${addToCartErrorMessage}`, error);
-      if (i === 2) {
-        throw new Error(addToCartErrorMessage);
-      }
-    }
+  // 5. Click on the product sort filter dropdown
+  try {
+    await page.locator('.product_sort_container').click({ timeout: 5000, retries: 3 });
+  } catch (error) {
+    console.error("Failed to click product sort filter dropdown:", error);
+    throw new Error("Failed to click product sort filter dropdown");
   }
 
-  // Step 6: Click the cart icon
-  const cartIconSelector = "[data-test=\"shopping-cart-link\"]";
-  const cartIconErrorMessage = "Failed to click the cart icon";
-  for (let i = 0; i < 3; i++) {
-    try {
-      await page.locator(cartIconSelector).waitFor({ timeout: 5000 });
-      await page.locator(cartIconSelector).click({ timeout: 5000 });
-      await page.waitForLoadState('networkidle');
-      break;
-    } catch (error) {
-      console.error(`Attempt ${i + 1} failed: ${cartIconErrorMessage}`, error);
-      if (i === 2) {
-        throw new Error(cartIconErrorMessage);
-      }
-    }
+  // 6. Click on Name (Z to A) option
+  try {
+    await page.locator('option[value="za"]').click({ timeout: 5000, retries: 3 });
+  } catch (error) {
+    console.error("Failed to click Name (Z to A) option:", error);
+    throw new Error("Failed to click Name (Z to A) option");
   }
 
-  // Step 7: Verify product is visible in the cart
-  const cartItemSelector = ".cart_item";
-  const cartItemErrorMessage = "Product is not visible in the cart";
-  for (let i = 0; i < 3; i++) {
-    try {
-      await page.locator(cartItemSelector).waitFor({ timeout: 5000 });
-      await expect(page.locator(cartItemSelector)).toBeVisible({ timeout: 5000 });
-      break;
-    } catch (error) {
-      console.error(`Attempt ${i + 1} failed: ${cartItemErrorMessage}`, error);
-      if (i === 2) {
-        throw new Error(cartItemErrorMessage);
-      }
-    }
+  // 7. Locate the product "Sauce Labs Backpack" and click the Add to Cart button.
+  try {
+    await page.locator('[data-test="add-to-cart-sauce-labs-backpack"]').click({ timeout: 5000, retries: 3 });
+  } catch (error) {
+    console.error("Failed to click Add to Cart button for Sauce Labs Backpack:", error);
+    throw new Error("Failed to click Add to Cart button for Sauce Labs Backpack");
   }
 
-  // Step 8: Verify product name contains 'Sauce Labs Backpack'
-  const productNameSelector = "[data-test=\"inventory-item-name\"]";
-  const productNameValue = "Sauce Labs Backpack";
-  const productNameErrorMessage = `Product name does not contain '${productNameValue}'`;
-  for (let i = 0; i < 3; i++) {
-    try {
-      await page.locator(productNameSelector).waitFor({ timeout: 5000 });
-      await expect(page.locator(productNameSelector)).toContainText(productNameValue, { timeout: 5000 });
-      break;
-    } catch (error) {
-      console.error(`Attempt ${i + 1} failed: ${productNameErrorMessage}`, error);
-      if (i === 2) {
-        throw new Error(productNameErrorMessage);
-      }
-    }
+  // 8. Click on the cart icon to verify that the product has been added.
+  try {
+    await page.locator('[data-test="shopping-cart-link"]').click({ timeout: 5000, retries: 3 });
+    await page.waitForLoadState('networkidle');
+  } catch (error) {
+    console.error("Failed to click the cart icon:", error);
+    throw new Error("Failed to click the cart icon");
   }
 
-  // Step 9: Click the checkout button
-  const checkoutButtonSelector = "[data-test=\"checkout\"]";
-  const checkoutButtonErrorMessage = "Failed to click the checkout button";
-  for (let i = 0; i < 3; i++) {
-    try {
-      await page.locator(checkoutButtonSelector).waitFor({ timeout: 5000 });
-      await page.locator(checkoutButtonSelector).click({ timeout: 5000 });
-      await page.waitForLoadState('networkidle');
-      break;
-    } catch (error) {
-      console.error(`Attempt ${i + 1} failed: ${checkoutButtonErrorMessage}`, error);
-      if (i === 2) {
-        throw new Error(checkoutButtonErrorMessage);
-      }
-    }
+  // 9. Ensure that the product is present in the cart.
+  try {
+    await page.locator('.cart_item').waitFor({ timeout: 5000, retries: 3 });
+  } catch (error) {
+    console.error("Product is not present in the cart:", error);
+    throw new Error("Product is not present in the cart");
   }
 
-  // Step 10: Fill first name field
-  const firstNameSelector = "[data-test=\"firstName\"]";
-  const firstNameValue = "chaitanya";
-  const firstNameErrorMessage = `Failed to fill first name field with '${firstNameValue}'`;
-  for (let i = 0; i < 3; i++) {
-    try {
-      await page.locator(firstNameSelector).waitFor({ timeout: 5000 });
-      await page.locator(firstNameSelector).fill(firstNameValue, { timeout: 5000 });
-      break;
-    } catch (error) {
-      console.error(`Attempt ${i + 1} failed: ${firstNameErrorMessage}`, error);
-      if (i === 2) {
-        throw new Error(firstNameErrorMessage);
-      }
-    }
+  // 10. Then click on the checkout button
+  try {
+    await page.locator('[data-test="checkout"]').click({ timeout: 5000, retries: 3 });
+    await page.waitForLoadState('networkidle');
+  } catch (error) {
+    console.error("Failed to click the checkout button:", error);
+    throw new Error("Failed to click the checkout button");
   }
 
-  // Step 11: Fill last name field
-  const lastNameSelector = "[data-test=\"lastName\"]";
-  const lastNameValue = "Kompella";
-  const lastNameErrorMessage = `Failed to fill last name field with '${lastNameValue}'`;
-  for (let i = 0; i < 3; i++) {
-    try {
-      await page.locator(lastNameSelector).waitFor({ timeout: 5000 });
-      await page.locator(lastNameSelector).fill(lastNameValue, { timeout: 5000 });
-      break;
-    } catch (error) {
-      console.error(`Attempt ${i + 1} failed: ${lastNameErrorMessage}`, error);
-      if (i === 2) {
-        throw new Error(lastNameErrorMessage);
-      }
-    }
+  // 11. Enter the first name as chaitanya in the first name field
+  try {
+    await page.locator('[data-test="firstName"]').fill('chaitanya', { timeout: 5000, retries: 3 });
+  } catch (error) {
+    console.error("Failed to enter the first name:", error);
+    throw new Error("Failed to enter the first name");
   }
 
-  // Step 12: Fill postal code field
-  const postalCodeSelector = "[data-test=\"postalCode\"]";
-  const postalCodeValue = "62567352";
-  const postalCodeErrorMessage = `Failed to fill postal code field with '${postalCodeValue}'`;
-  for (let i = 0; i < 3; i++) {
-    try {
-      await page.locator(postalCodeSelector).waitFor({ timeout: 5000 });
-      await page.locator(postalCodeSelector).fill(postalCodeValue, { timeout: 5000 });
-      break;
-    } catch (error) {
-      console.error(`Attempt ${i + 1} failed: ${postalCodeErrorMessage}`, error);
-      if (i === 2) {
-        throw new Error(postalCodeErrorMessage);
-      }
-    }
+  // 12. Enter the last name as Kompella in the last name field
+  try {
+    await page.locator('[data-test="lastName"]').fill('Kompella', { timeout: 5000, retries: 3 });
+  } catch (error) {
+    console.error("Failed to enter the last name:", error);
+    throw new Error("Failed to enter the last name");
   }
 
-  // Step 13: Click the continue button
-  const continueButtonSelector = "[data-test=\"continue\"]";
-  const continueButtonErrorMessage = "Failed to click the continue button";
-  for (let i = 0; i < 3; i++) {
-    try {
-      await page.locator(continueButtonSelector).waitFor({ timeout: 5000 });
-      await page.locator(continueButtonSelector).click({ timeout: 5000 });
-      await page.waitForLoadState('networkidle');
-      break;
-    } catch (error) {
-      console.error(`Attempt ${i + 1} failed: ${continueButtonErrorMessage}`, error);
-      if (i === 2) {
-        throw new Error(continueButtonErrorMessage);
-      }
-    }
+  // 13. Enter the postal code as 62567352 in postal code field
+  try {
+    await page.locator('[data-test="postalCode"]').fill('62567352', { timeout: 5000, retries: 3 });
+  } catch (error) {
+    console.error("Failed to enter the postal code:", error);
+    throw new Error("Failed to enter the postal code");
   }
 
-  // Step 14: Click the finish button
-  const finishButtonSelector = "[data-test=\"finish\"]";
-  const finishButtonErrorMessage = "Failed to click the finish button";
-  for (let i = 0; i < 3; i++) {
-    try {
-      await page.locator(finishButtonSelector).waitFor({ timeout: 5000 });
-      await page.locator(finishButtonSelector).click({ timeout: 5000 });
-      await page.waitForLoadState('networkidle');
-      break;
-    } catch (error) {
-      console.error(`Attempt ${i + 1} failed: ${finishButtonErrorMessage}`, error);
-      if (i === 2) {
-        throw new Error(finishButtonErrorMessage);
-      }
-    }
+  // 14. Click on continue button
+  try {
+    await page.locator('[data-test="continue"]').click({ timeout: 5000, retries: 3 });
+    await page.waitForLoadState('networkidle');
+  } catch (error) {
+    console.error("Failed to click the continue button:", error);
+    throw new Error("Failed to click the continue button");
   }
 
-  // Step 15: Verify completion message contains 'Thank you for your order!'
-  const completionMessageSelector = ".complete-header";
-  const completionMessageValue = "Thank you for your order!";
-  const completionMessageErrorMessage = `Completion message does not contain '${completionMessageValue}'`;
-  for (let i = 0; i < 3; i++) {
-    try {
-      await page.locator(completionMessageSelector).waitFor({ timeout: 5000 });
-      await expect(page.locator(completionMessageSelector)).toContainText(completionMessageValue, { timeout: 5000 });
-      break;
-    } catch (error) {
-      console.error(`Attempt ${i + 1} failed: ${completionMessageErrorMessage}`, error);
-      if (i === 2) {
-        throw new Error(completionMessageErrorMessage);
-      }
-    }
+  // 15. Click on finish button
+  try {
+    await page.locator('[data-test="finish"]').click({ timeout: 5000, retries: 3 });
+    await page.waitForLoadState('networkidle');
+  } catch (error) {
+    console.error("Failed to click the finish button:", error);
+    throw new Error("Failed to click the finish button");
   }
 
-  // Step 16: Click the back to home button
-  const backToHomeButtonSelector = "[data-test=\"back-to-products\"]";
-  const backToHomeButtonErrorMessage = "Failed to click the back to home button";
-  for (let i = 0; i < 3; i++) {
-    try {
-      await page.locator(backToHomeButtonSelector).waitFor({ timeout: 5000 });
-      await page.locator(backToHomeButtonSelector).click({ timeout: 5000 });
-      await page.waitForLoadState('networkidle');
-      break;
-    } catch (error) {
-      console.error(`Attempt ${i + 1} failed: ${backToHomeButtonErrorMessage}`, error);
-      if (i === 2) {
-        throw new Error(backToHomeButtonErrorMessage);
-      }
-    }
+  // 16. You should see a message “Thank you for your order!”
+  try {
+    await page.locator('text="Thank you for your order!"').waitFor({ timeout: 5000, retries: 3 });
+  } catch (error) {
+    console.error("The 'Thank you for your order!' message is not displayed:", error);
+    throw new Error("The 'Thank you for your order!' message is not displayed");
   }
 
-    // Step 17: Click the burger bar
-    const burgerBarSelector = "#react-burger-menu-btn";
-    const burgerBarErrorMessage = "Failed to click the burger bar";
-    for (let i = 0; i < 3; i++) {
-      try {
-        await page.locator(burgerBarSelector).waitFor({ timeout: 5000 });
-        await page.locator(burgerBarSelector).click({ timeout: 5000 });
-        break;
-      } catch (error) {
-        console.error(`Attempt ${i + 1} failed: ${burgerBarErrorMessage}`, error);
-        if (i === 2) {
-          throw new Error(burgerBarErrorMessage);
-        }
-      }
-    }
-
-  // Step 18: Click the logout button
-  const logoutButtonSelector = "#logout_sidebar_link";
-  const logoutButtonErrorMessage = "Failed to click the logout button";
-  for (let i = 0; i < 3; i++) {
-    try {
-      await page.locator(logoutButtonSelector).waitFor({ timeout: 5000 });
-      await page.locator(logoutButtonSelector).click({ timeout: 5000 });
-      await page.waitForLoadState('networkidle');
-      break;
-    } catch (error) {
-      console.error(`Attempt ${i + 1} failed: ${logoutButtonErrorMessage}`, error);
-      if (i === 2) {
-        throw new Error(logoutButtonErrorMessage);
-      }
-    }
+  // 17. Then click on back to home button
+  try {
+    await page.locator('[data-test="back-to-products"]').click({ timeout: 5000, retries: 3 });
+    await page.waitForLoadState('networkidle');
+  } catch (error) {
+    console.error("Failed to click the back to home button:", error);
+    throw new Error("Failed to click the back to home button");
   }
+
+  // 18. Click to burger bar
+  try {
+    await page.locator('#react-burger-menu-btn').click({ timeout: 5000, retries: 3 });
+  } catch (error) {
+    console.error("Failed to click the burger bar:", error);
+    throw new Error("Failed to click the burger bar");
+  }
+
+  // 19. Click on logout
+  try {
+    await page.locator('#logout_sidebar_link').click({ timeout: 5000, retries: 3 });
+    await page.waitForLoadState('networkidle');
+  } catch (error) {
+    console.error("Failed to click the logout button:", error);
+    throw new Error("Failed to click the logout button");
+  }
+
+  // 20. Keep the browser open after the test execution is complete.
+  await page.pause();
+
+  await browser.close();
 });
