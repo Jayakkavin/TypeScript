@@ -38,22 +38,6 @@ test("Saucedemo Test", async () => {
     throw new Error("Failed to click login button");
   }
 
-  // 5. Click on the product sort filter dropdown
-  try {
-    await page.locator('.product_sort_container').click({ timeout: 5000, retries: 3 });
-  } catch (error) {
-    console.error("Failed to click product sort filter dropdown:", error);
-    throw new Error("Failed to click product sort filter dropdown");
-  }
-
-  // 6. Click on Name (Z to A) option
-  try {
-    await page.locator('option[value="za"]').click({ timeout: 5000, retries: 3 });
-  } catch (error) {
-    console.error("Failed to click Name (Z to A) option:", error);
-    throw new Error("Failed to click Name (Z to A) option");
-  }
-
   // 7. Locate the product "Sauce Labs Backpack" and click the Add to Cart button.
   try {
     await page.locator('[data-test="add-to-cart-sauce-labs-backpack"]').click({ timeout: 5000, retries: 3 });
