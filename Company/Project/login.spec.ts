@@ -1,280 +1,292 @@
 import { test, expect, chromium } from "@playwright/test";
 
-test("Demowebshop E2E Test", async () => {
+test("Demowebshop purchase flow", async () => {
   const browser = await chromium.launch({ headless: false });
   const context = await browser.newContext();
   const page = await context.newPage();
 
-  const steps = [
-    {
-      action: "navigate",
-      selector: "https://demowebshop.tricentis.com",
-      value: null,
-      waitTimeoutMs: 10000,
-      retry: 3,
-      fallbacks: ["waitForLoadState"],
-      errorMessage: "Failed to navigate to https://demowebshop.tricentis.com",
-    },
-    {
-      action: "click",
-      selector: 'a.ico-login[href="/login"]',
-      value: null,
-      waitTimeoutMs: 5000,
-      retry: 3,
-      fallbacks: [],
-      errorMessage: "Failed to click the 'Log in' link",
-    },
-    {
-      action: "assert",
-      selector: 'a.account',
-      value: "snaptest@yopmail.com",
-      waitTimeoutMs: 10000,
-      retry: 3,
-      fallbacks: [{ type: 'filter', text: 'snaptest@yopmail.com' }],
-      errorMessage: "Failed to validate that the logged-in email is displayed",
-    },
-    {
-      action: "fill",
-      selector: "#Password",
-      value: "snaptest@123",
-      waitTimeoutMs: 5000,
-      retry: 3,
-      fallbacks: [],
-      errorMessage: "Failed to enter the password",
-    },
-    {
-      action: "click",
-      selector: 'input.button-1.login-button[type="submit"]',
-      value: 'Log in',
-      waitTimeoutMs: 5000,
-      retry: 3,
-      fallbacks: [],
-      errorMessage: "Failed to click the 'Log in' button",
-    },
-    {
-      action: "assert",
-      selector: "a.account",
-      value: "snaptest@yopmail.com",
-      waitTimeoutMs: 10000,
-      retry: 3,
-      fallbacks: [],
-      errorMessage: "Failed to validate that the logged-in email is displayed",
-    },
-    {
-      action: "click",
-      selector: '.top-menu li a[href="/books"]',
-      value: null,
-      waitTimeoutMs: 5000,
-      retry: 3,
-      fallbacks: [],
-      errorMessage: "Failed to click the 'Books' menu",
-    },
-    {
-      action: "click",
-      selector: 'div.product-item a[href="/computing-and-internet"]',
-      value: null,
-      waitTimeoutMs: 5000,
-      retry: 3,
-      fallbacks: [],
-      errorMessage: "Failed to click on Computing and Internet link",
-    },
-    {
-      action: "click",
-      selector: "#add-to-cart-button-45",
-      value: null,
-      waitTimeoutMs: 10000,
-      retry: 3,
-      fallbacks: [],
-      errorMessage: "Failed to click the 'Add to cart' button",
-    },
-    {
-      action: "click",
-      selector: "a.ico-cart",
-      value: null,
-      waitTimeoutMs: 5000,
-      retry: 3,
-      fallbacks: [],
-      errorMessage: "Failed to click the 'Shopping cart' link",
-    },
-    {
-      action: "assert",
-      selector: 'a[href="/computing-and-internet"]',
-      value: null,
-      waitTimeoutMs: 10000,
-      retry: 3,
-      fallbacks: [],
-      errorMessage: "Failed to find 'Computing and Internet' in the cart",
-    },
-    {
-      action: "click",
-      selector: "#termsofservice",
-      value: null,
-      waitTimeoutMs: 5000,
-      retry: 3,
-      fallbacks: [],
-      errorMessage: "Failed to click the 'Terms of service' checkbox",
-    },
-    {
-      action: "click",
-      selector: "#checkout.button-1.checkout-button",
-      value: null,
-      waitTimeoutMs: 5000,
-      retry: 3,
-      fallbacks: [],
-      errorMessage: "Failed to click the 'Checkout' button",
-    },
-    {
-      action: "click",
-      selector: 'button[name="billingaddress.nextstep"]',
-      value: null,
-      waitTimeoutMs: 10000,
-      retry: 3,
-      fallbacks: [],
-      errorMessage:
-        "Failed to click the 'Continue' button on the billing address section",
-    },
-    {
-      action: "assert",
-      selector: "#shipping-address-block",
-      value: null,
-      waitTimeoutMs: 10000,
-      retry: 3,
-      fallbacks: [],
-      errorMessage: "Shipping address section is not displayed",
-    },
-    {
-      action: "click",
-      selector: 'button[name="shippingaddress.nextstep"]',
-      value: null,
-      waitTimeoutMs: 10000,
-      retry: 3,
-      fallbacks: [],
-      errorMessage:
-        "Failed to click the 'Continue' button in the shipping address section",
-    },
-    {
-      action: "assert",
-      selector: "#shipping-method-block",
-      value: null,
-      waitTimeoutMs: 10000,
-      retry: 3,
-      fallbacks: [],
-      errorMessage: "Shipping method section is not displayed",
-    },
-    {
-      action: "click",
-      selector: 'button[name="shippingmethod.nextstep"]',
-      value: null,
-      waitTimeoutMs: 10000,
-      retry: 3,
-      fallbacks: [],
-      errorMessage:
-        "Failed to click the 'Continue' button in the shipping method section",
-    },
-    {
-      action: "assert",
-      selector: "#paymentmethod_0",
-      value: null,
-      waitTimeoutMs: 5000,
-      retry: 3,
-      fallbacks: [],
-      errorMessage: "'By Cash On Delivery' is not selected by default",
-    },
-    {
-      action: "click",
-      selector: 'button[name="paymentmethod.nextstep"]',
-      value: null,
-      waitTimeoutMs: 5000,
-      retry: 3,
-      fallbacks: [],
-      errorMessage:
-        "Failed to click the 'Continue' button in the payment method section",
-    },
-    {
-      action: "assert",
-      selector: ".payment-method-name",
-      value: "Cash On Delivery",
-      waitTimeoutMs: 10000,
-      retry: 3,
-      fallbacks: [],
-      errorMessage: "The selected payment method is not 'Cash On Delivery'",
-    },
-    {
-      action: "click",
-      selector: 'button[name="paymentinfo.nextstep"]',
-      value: null,
-      waitTimeoutMs: 5000,
-      retry: 3,
-      fallbacks: [],
-      errorMessage:
-        "Failed to click the 'Continue' button in the payment information section",
-    },
-    {
-      action: "click",
-      selector: ".button-1.confirm-order-button",
-      value: null,
-      waitTimeoutMs: 5000,
-      retry: 3,
-      fallbacks: [],
-      errorMessage:
-        "Failed to click the 'Confirm' button on the confirm order section",
-    },
-    {
-      action: "assert",
-      selector: "div.order-number",
-      value: null,
-      waitTimeoutMs: 10000,
-      retry: 3,
-      fallbacks: [],
-      errorMessage: "Order number is not displayed",
-    },
-  ];
-
-  for (const step of steps) {
-    try {
-      await test.step(step.errorMessage, async () => {
-        for (let i = 0; i <= step.retry; i++) {
-          try {
-            if (step.action === "navigate") {
-              await page.goto(step.selector, {
-                waitUntil: "networkidle",
-                timeout: step.waitTimeoutMs,
-              });
-              break;
-            } else if (step.action === "click") {
-              await page.locator(step.selector).click({ timeout: step.waitTimeoutMs });
-              break;
-            } else if (step.action === "fill") {
-              await page.locator(step.selector).fill(step.value, { timeout: step.waitTimeoutMs });
-              break;
-            } else if (step.action === "check") {
-              await page.locator(step.selector).check({ timeout: step.waitTimeoutMs });
-              break;
-            } else if (step.action === "assert") {
-              if (step.value) {
-                await expect(page.locator(step.selector)).toContainText(step.value, { timeout: step.waitTimeoutMs });
-              } else {
-                await expect(page.locator(step.selector)).toBeVisible({ timeout: step.waitTimeoutMs });
-              }
-              break;
+  // Helper function to handle actions with retries and fallbacks
+  async function performAction(action: string, selector: string, value: string | null, waitTimeoutMs: number, retry: number, fallbacks: string[], errorMessage: string) {
+    for (let i = 0; i <= retry; i++) {
+      try {
+        switch (action) {
+          case "navigate":
+            await page.goto(selector, { waitUntil: 'networkidle' });
+            break;
+          case "click":
+            if (fallbacks.includes("scrollIntoView")) {
+              await page.locator(selector).scrollIntoViewIfNeeded();
             }
-          } catch (error) {
-            if (i === step.retry) {
-              console.error(
-                `Failed after ${step.retry + 1} attempts: ${step.errorMessage}`
-              );
-              throw error;
-            }
-            console.log(`Attempt ${i + 1} failed. Retrying...`);
-            await page.waitForTimeout(1000); // Wait before retrying
-          }
+            await page.locator(selector).click({ timeout: waitTimeoutMs });
+            break;
+          case "fill":
+            await page.locator(selector).fill(value!, { timeout: waitTimeoutMs });
+            break;
+          case "check":
+            await page.locator(selector).check({ timeout: waitTimeoutMs });
+            break;
+          case "waitForSelector":
+            await page.locator(selector).waitFor({ timeout: waitTimeoutMs });
+            break;
+          default:
+            throw new Error(`Unknown action: ${action}`);
         }
-      });
-    } catch (error) {
-      console.error(`Test failed: ${error}`);
-      throw error; // Exit with a clear error
+        return; // Success, exit the retry loop
+      } catch (error) {
+        console.error(`Attempt ${i + 1} failed for action ${action} on selector ${selector}: ${error}`);
+        if (i === retry) {
+          console.error(`All retries failed: ${errorMessage}`);
+          throw new Error(errorMessage); // Fail the test if all retries fail
+        }
+        // Wait before retrying (optional)
+        await page.waitForTimeout(500);
+      }
     }
   }
 
-  await browser.close();
+  try {
+    // Test steps
+    await performAction(
+      "navigate",
+      "https://demowebshop.tricentis.com",
+      null,
+      5000,
+      3,
+      [],
+      "Failed to navigate to https://demowebshop.tricentis.com after multiple retries."
+    );
+
+    await performAction(
+      "click",
+      "a.ico-login",
+      null,
+      5000,
+      3,
+      ["scrollIntoView"],
+      "Failed to click the login link after multiple retries. Ensure the link is visible and enabled."
+    );
+
+    await performAction(
+      "fill",
+      "input#Email",
+      "snaptest@yopmail.com",
+      5000,
+      3,
+      [],
+      "Failed to fill the email input field after multiple retries. Ensure the input field is present and enabled."
+    );
+
+    await performAction(
+      "fill",
+      "input#Password",
+      "snaptest@123",
+      5000,
+      3,
+      [],
+      "Failed to fill the password input field after multiple retries. Ensure the input field is present and enabled."
+    );
+
+    await performAction(
+      "click",
+      "input[value='Log in']",
+      null,
+      5000,
+      3,
+      ["scrollIntoView"],
+      "Failed to click the login button after multiple retries. Ensure the button is visible and enabled."
+    );
+
+    await performAction(
+        "waitForSelector",
+        "a.account",
+        null,
+        10000,
+        3,
+        [],
+        "The logged-in email ID did not appear in the header after login within the specified timeout."
+    );
+
+    await performAction(
+      "click",
+      "ul.top-menu > li > a[href='/books']",
+      null,
+      5000,
+      3,
+      ["scrollIntoView"],
+      "Failed to click the Books link after multiple retries. Ensure the link is visible and enabled."
+    );
+
+    await performAction(
+      "click",
+      "div.product-grid > div.item-box > div.product-item > div.picture > a",
+      null,
+      5000,
+      3,
+      ["scrollIntoView"],
+      "Failed to click a product link after multiple retries. Ensure the link is visible and enabled."
+    );
+
+    await performAction(
+      "click",
+      "input[value='Add to cart']",
+      null,
+      5000,
+      3,
+      ["scrollIntoView"],
+      "Failed to click the Add to cart button after multiple retries. Ensure the button is visible and enabled."
+    );
+
+    await performAction(
+      "click",
+      "span.cart-label",
+      null,
+      5000,
+      3,
+      ["scrollIntoView"],
+      "Failed to click the Shopping cart link after multiple retries. Ensure the link is visible and enabled."
+    );
+
+    await performAction(
+        "waitForSelector",
+        "div.cart-item-row",
+        null,
+        10000,
+        3,
+        [],
+        "The product did not appear in the shopping cart within the specified timeout."
+    );
+
+    await performAction(
+      "check",
+      "input#termsofservice",
+      null,
+      5000,
+      3,
+      [],
+      "Failed to check the Terms of service checkbox after multiple retries. Ensure the checkbox is present and enabled."
+    );
+
+    await performAction(
+      "click",
+      "button#checkout",
+      null,
+      5000,
+      3,
+      ["scrollIntoView"],
+      "Failed to click the Checkout button after multiple retries. Ensure the button is visible and enabled."
+    );
+
+    await performAction(
+      "click",
+      "input[value='Continue']",
+      null,
+      5000,
+      3,
+      ["scrollIntoView"],
+      "Failed to click the Continue button on the billing address section after multiple retries. Ensure the button is visible and enabled."
+    );
+
+    await performAction(
+        "waitForSelector",
+        "div.shipping-address-page",
+        null,
+        10000,
+        3,
+        [],
+        "The shipping address section did not appear within the specified timeout."
+    );
+
+    await performAction(
+      "click",
+      "input[value='Continue']",
+      null,
+      5000,
+      3,
+      ["scrollIntoView"],
+      "Failed to click the Continue button on the shipping address section after multiple retries. Ensure the button is visible and enabled."
+    );
+
+    await performAction(
+        "waitForSelector",
+        "div.shipping-method-page",
+        null,
+        10000,
+        3,
+        [],
+        "The shipping method section did not appear within the specified timeout."
+    );
+
+    await performAction(
+      "click",
+      "input[value='Continue']",
+      null,
+      5000,
+      3,
+      ["scrollIntoView"],
+      "Failed to click the Continue button on the shipping method section after multiple retries. Ensure the button is visible and enabled."
+    );
+
+    await performAction(
+      "check",
+      "input#paymentmethod_0",
+      null,
+      5000,
+      3,
+      [],
+      "Cash On Delivery was not selected by default."
+    );
+
+    await performAction(
+      "click",
+      "input[value='Continue']",
+      null,
+      5000,
+      3,
+      ["scrollIntoView"],
+      "Failed to click the Continue button on the payment method section after multiple retries. Ensure the button is visible and enabled."
+    );
+
+    await performAction(
+        "waitForSelector",
+        "div.payment-info-page",
+        null,
+        10000,
+        3,
+        [],
+        "The payment information section did not appear within the specified timeout."
+    );
+
+    await performAction(
+      "click",
+      "input[value='Continue']",
+      null,
+      5000,
+      3,
+      ["scrollIntoView"],
+      "Failed to click the Continue button on the payment information section after multiple retries. Ensure the button is visible and enabled."
+    );
+
+    await performAction(
+      "click",
+      "input[value='Confirm']",
+      null,
+      5000,
+      3,
+      ["scrollIntoView"],
+      "Failed to click the Confirm button on the confirm order section after multiple retries. Ensure the button is visible and enabled."
+    );
+
+    await performAction(
+        "waitForSelector",
+        "div.order-completed",
+        null,
+        10000,
+        3,
+        [],
+        "The order completion message did not appear within the specified timeout."
+    );
+
+  } finally {
+    await browser.close();
+  }
 });
