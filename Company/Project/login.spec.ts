@@ -18,7 +18,7 @@ test("Demowebshop E2E Test", async () => {
     {
       action: "click",
       selector: 'a.ico-login[href="/login"]',
-      value: "Log in",
+      value: null,
       waitTimeoutMs: 5000,
       retry: 3,
       fallbacks: [],
@@ -45,7 +45,7 @@ test("Demowebshop E2E Test", async () => {
     {
       action: "click",
       selector: 'button.button-1[type="submit"]',
-      value: null,
+      value: "Log in",
       waitTimeoutMs: 5000,
       retry: 3,
       fallbacks: [],
