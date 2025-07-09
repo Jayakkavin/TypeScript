@@ -1,166 +1,280 @@
-
 import { test, expect, chromium } from "@playwright/test";
 
-test("SauceDemo Test", async () => {
+test("Demowebshop E2E Test", async () => {
   const browser = await chromium.launch({ headless: false });
   const context = await browser.newContext();
   const page = await context.newPage();
 
-  // Navigate to https://www.saucedemo.com/.
-  try {
-    await page.goto("https://www.saucedemo.com/", {
-      waitUntil: "networkidle",
-      timeout: 10000,
-    });
-  } catch (error) {
-    console.error("Navigation to saucedemo.com failed:", error);
-    throw new Error("Navigation to saucedemo.com failed.");
+  const steps = [
+    {
+      action: "navigate",
+      selector: "https://demowebshop.tricentis.com",
+      value: null,
+      waitTimeoutMs: 10000,
+      retry: 3,
+      fallbacks: ["waitForLoadState"],
+      errorMessage: "Failed to navigate to https://demowebshop.tricentis.com",
+    },
+    {
+      action: "click",
+      selector: 'a.ico-login[href="/login"]',
+      value: null,
+      waitTimeoutMs: 5000,
+      retry: 3,
+      fallbacks: [],
+      errorMessage: "Failed to click the 'Log in' link",
+    },
+    {
+      action: "fill",
+      selector: "#Email",
+      value: "snaptest@yopmail.com",
+      waitTimeoutMs: 5000,
+      retry: 3,
+      fallbacks: [],
+      errorMessage: "Failed to enter the email address",
+    },
+    {
+      action: "fill",
+      selector: "#Password",
+      value: "snaptest@123",
+      waitTimeoutMs: 5000,
+      retry: 3,
+      fallbacks: [],
+      errorMessage: "Failed to enter the password",
+    },
+    {
+      action: "click",
+      selector: 'input.button-1[type="submit"]',
+      value: null,
+      waitTimeoutMs: 5000,
+      retry: 3,
+      fallbacks: [],
+      errorMessage: "Failed to click the 'Log in' button",
+    },
+    {
+      action: "assert",
+      selector: "a.account",
+      value: "snaptest@yopmail.com",
+      waitTimeoutMs: 10000,
+      retry: 3,
+      fallbacks: [],
+      errorMessage: "Failed to validate that the logged-in email is displayed",
+    },
+    {
+      action: "click",
+      selector: '.top-menu li a[href="/books"]',
+      value: null,
+      waitTimeoutMs: 5000,
+      retry: 3,
+      fallbacks: [],
+      errorMessage: "Failed to click the 'Books' menu",
+    },
+    {
+      action: "click",
+      selector: 'div.product-item a[href="/computing-and-internet"]',
+      value: null,
+      waitTimeoutMs: 5000,
+      retry: 3,
+      fallbacks: [],
+      errorMessage: "Failed to click on Computing and Internet link",
+    },
+    {
+      action: "click",
+      selector: "#add-to-cart-button-45",
+      value: null,
+      waitTimeoutMs: 10000,
+      retry: 3,
+      fallbacks: [],
+      errorMessage: "Failed to click the 'Add to cart' button",
+    },
+    {
+      action: "click",
+      selector: "a.ico-cart",
+      value: null,
+      waitTimeoutMs: 5000,
+      retry: 3,
+      fallbacks: [],
+      errorMessage: "Failed to click the 'Shopping cart' link",
+    },
+    {
+      action: "assert",
+      selector: 'a[href="/computing-and-internet"]',
+      value: null,
+      waitTimeoutMs: 10000,
+      retry: 3,
+      fallbacks: [],
+      errorMessage: "Failed to find 'Computing and Internet' in the cart",
+    },
+    {
+      action: "click",
+      selector: "#termsofservice",
+      value: null,
+      waitTimeoutMs: 5000,
+      retry: 3,
+      fallbacks: [],
+      errorMessage: "Failed to click the 'Terms of service' checkbox",
+    },
+    {
+      action: "click",
+      selector: "#checkout.button-1.checkout-button",
+      value: null,
+      waitTimeoutMs: 5000,
+      retry: 3,
+      fallbacks: [],
+      errorMessage: "Failed to click the 'Checkout' button",
+    },
+    {
+      action: "click",
+      selector: 'button[name="billingaddress.nextstep"]',
+      value: null,
+      waitTimeoutMs: 10000,
+      retry: 3,
+      fallbacks: [],
+      errorMessage:
+        "Failed to click the 'Continue' button on the billing address section",
+    },
+    {
+      action: "assert",
+      selector: "#shipping-address-block",
+      value: null,
+      waitTimeoutMs: 10000,
+      retry: 3,
+      fallbacks: [],
+      errorMessage: "Shipping address section is not displayed",
+    },
+    {
+      action: "click",
+      selector: 'button[name="shippingaddress.nextstep"]',
+      value: null,
+      waitTimeoutMs: 10000,
+      retry: 3,
+      fallbacks: [],
+      errorMessage:
+        "Failed to click the 'Continue' button in the shipping address section",
+    },
+    {
+      action: "assert",
+      selector: "#shipping-method-block",
+      value: null,
+      waitTimeoutMs: 10000,
+      retry: 3,
+      fallbacks: [],
+      errorMessage: "Shipping method section is not displayed",
+    },
+    {
+      action: "click",
+      selector: 'button[name="shippingmethod.nextstep"]',
+      value: null,
+      waitTimeoutMs: 10000,
+      retry: 3,
+      fallbacks: [],
+      errorMessage:
+        "Failed to click the 'Continue' button in the shipping method section",
+    },
+    {
+      action: "assert",
+      selector: "#paymentmethod_0",
+      value: null,
+      waitTimeoutMs: 5000,
+      retry: 3,
+      fallbacks: [],
+      errorMessage: "'By Cash On Delivery' is not selected by default",
+    },
+    {
+      action: "click",
+      selector: 'button[name="paymentmethod.nextstep"]',
+      value: null,
+      waitTimeoutMs: 5000,
+      retry: 3,
+      fallbacks: [],
+      errorMessage:
+        "Failed to click the 'Continue' button in the payment method section",
+    },
+    {
+      action: "assert",
+      selector: ".payment-method-name",
+      value: "Cash On Delivery",
+      waitTimeoutMs: 10000,
+      retry: 3,
+      fallbacks: [],
+      errorMessage: "The selected payment method is not 'Cash On Delivery'",
+    },
+    {
+      action: "click",
+      selector: 'button[name="paymentinfo.nextstep"]',
+      value: null,
+      waitTimeoutMs: 5000,
+      retry: 3,
+      fallbacks: [],
+      errorMessage:
+        "Failed to click the 'Continue' button in the payment information section",
+    },
+    {
+      action: "click",
+      selector: ".button-1.confirm-order-button",
+      value: null,
+      waitTimeoutMs: 5000,
+      retry: 3,
+      fallbacks: [],
+      errorMessage:
+        "Failed to click the 'Confirm' button on the confirm order section",
+    },
+    {
+      action: "assert",
+      selector: "div.order-number",
+      value: null,
+      waitTimeoutMs: 10000,
+      retry: 3,
+      fallbacks: [],
+      errorMessage: "Order number is not displayed",
+    },
+  ];
+
+  for (const step of steps) {
+    try {
+      await test.step(step.errorMessage, async () => {
+        for (let i = 0; i <= step.retry; i++) {
+          try {
+            if (step.action === "navigate") {
+              await page.goto(step.selector, {
+                waitUntil: "networkidle",
+                timeout: step.waitTimeoutMs,
+              });
+              break;
+            } else if (step.action === "click") {
+              await page.locator(step.selector).click({ timeout: step.waitTimeoutMs });
+              break;
+            } else if (step.action === "fill") {
+              await page.locator(step.selector).fill(step.value, { timeout: step.waitTimeoutMs });
+              break;
+            } else if (step.action === "check") {
+              await page.locator(step.selector).check({ timeout: step.waitTimeoutMs });
+              break;
+            } else if (step.action === "assert") {
+              if (step.value) {
+                await expect(page.locator(step.selector)).toContainText(step.value, { timeout: step.waitTimeoutMs });
+              } else {
+                await expect(page.locator(step.selector)).toBeVisible({ timeout: step.waitTimeoutMs });
+              }
+              break;
+            }
+          } catch (error) {
+            if (i === step.retry) {
+              console.error(
+                `Failed after ${step.retry + 1} attempts: ${step.errorMessage}`
+              );
+              throw error;
+            }
+            console.log(`Attempt ${i + 1} failed. Retrying...`);
+            await page.waitForTimeout(1000); // Wait before retrying
+          }
+        }
+      });
+    } catch (error) {
+      console.error(`Test failed: ${error}`);
+      throw error; // Exit with a clear error
+    }
   }
 
-  // Enter "standard_user" in the username field with id 'user-name'.
-  try {
-    await page.locator("#user-name").fill("standard_user", { timeout: 5000, retries: 2 });
-  } catch (error) {
-    console.error("Failed to enter username:", error);
-    throw new Error("Failed to enter username.");
-  }
-
-  // Enter "secret_sauce" in the password field with id 'password'.
-  try {
-    await page.locator("#password").fill("secret_sauce", { timeout: 5000, retries: 2 });
-  } catch (error) {
-    console.error("Failed to enter password:", error);
-    throw new Error("Failed to enter password.");
-  }
-
-  // Click the Login button with id 'login-button'.
-  try {
-    await page.locator("#login-button").click({ timeout: 5000, retries: 3 });
-  } catch (error) {
-    console.error("Login button click failed:", error);
-    throw new Error("Login button click failed.");
-  }
-
-  // Click on the product sort filter dropdown with class 'product_sort_container'.
-  try {
-    await page.locator(".product_sort_container").click({ timeout: 5000, retries: 2 });
-  } catch (error) {
-    console.error("Failed to click product sort dropdown:", error);
-    throw new Error("Failed to click product sort dropdown.");
-  }
-
-  // Select 'Name (Z to A)' from the product sort filter dropdown with class 'product_sort_container'.
-  try {
-    await page.locator(".product_sort_container").selectOption("za", { timeout: 5000, retries: 2 });
-  } catch (error) {
-    console.error("Failed to select 'Name (Z to A)':", error);
-    throw new Error("Failed to select 'Name (Z to A)'.");
-  }
-
-  // Locate the product "Sauce Labs Backpack" and click the Add to cart button with id 'add-to-cart-sauce-labs-backpack'.
-  try {
-    await page.locator("#add-to-cart-sauce-labs-backpack").click({ timeout: 5000, retries: 3 });
-  } catch (error) {
-    console.error("Failed to add 'Sauce Labs Backpack' to cart:", error);
-    throw new Error("Failed to add 'Sauce Labs Backpack' to cart.");
-  }
-
-  // Click on the cart icon with class 'shopping_cart_link'.
-  try {
-    await page.locator(".shopping_cart_link").click({ timeout: 5000, retries: 3 });
-  } catch (error) {
-    console.error("Failed to click the cart icon:", error);
-    throw new Error("Failed to click the cart icon.");
-  }
-
-  // Ensure that the product 'Sauce Labs Backpack' is present in the cart.
-  try {
-    await page.locator(".inventory_item_name:has-text('Sauce Labs Backpack')").waitFor({ timeout: 5000, retries: 2 });
-  } catch (error) {
-    console.error("'Sauce Labs Backpack' not found in cart:", error);
-    throw new Error("'Sauce Labs Backpack' not found in cart.");
-  }
-
-  // Click on the checkout button with id 'checkout'.
-  try {
-    await page.locator("#checkout").click({ timeout: 5000, retries: 3 });
-  } catch (error) {
-    console.error("Checkout button click failed:", error);
-    throw new Error("Checkout button click failed.");
-  }
-
-  // Enter the first name as chaitanya in the first name field with id 'first-name'.
-  try {
-    await page.locator("#first-name").fill("chaitanya", { timeout: 5000, retries: 2 });
-  } catch (error) {
-    console.error("Failed to enter first name:", error);
-    throw new Error("Failed to enter first name.");
-  }
-
-  // Enter the last name as Kompella in the last name field with id 'last-name'.
-  try {
-    await page.locator("#last-name").fill("Kompella", { timeout: 5000, retries: 2 });
-  } catch (error) {
-    console.error("Failed to enter last name:", error);
-    throw new Error("Failed to enter last name.");
-  }
-
-  // Enter the postal code as 62567352 in postal code field with id 'postal-code'.
-  try {
-    await page.locator("#postal-code").fill("62567352", { timeout: 5000, retries: 2 });
-  } catch (error) {
-    console.error("Failed to enter postal code:", error);
-    throw new Error("Failed to enter postal code.");
-  }
-
-  // Click on continue button with id 'continue'.
-  try {
-    await page.locator("#continue").click({ timeout: 5000, retries: 3 });
-  } catch (error) {
-    console.error("Continue button click failed:", error);
-    throw new Error("Continue button click failed.");
-  }
-
-  // Click on finish button with id 'finish'.
-  try {
-    await page.locator("#finish").click({ timeout: 5000, retries: 3 });
-  } catch (error) {
-    console.error("Finish button click failed:", error);
-    throw new Error("Finish button click failed.");
-  }
-
-  // You should see a message “Thank you for your order!”.
-  try {
-    await page.locator("text=Thank you for your order!").waitFor({ timeout: 5000, retries: 2 });
-  } catch (error) {
-    console.error("Confirmation message not found:", error);
-    throw new Error("Confirmation message not found.");
-  }
-
-  // Then click on back to home button with id 'back-to-products'.
-  try {
-    await page.locator("#back-to-products").click({ timeout: 5000, retries: 3 });
-  } catch (error) {
-    console.error("Back to home button click failed:", error);
-    throw new Error("Back to home button click failed.");
-  }
-
-  // Click on the burger bar with id 'react-burger-menu-btn'.
-  try {
-    await page.locator("#react-burger-menu-btn").click({ timeout: 5000, retries: 3 });
-  } catch (error) {
-    console.error("Burger menu button click failed:", error);
-    throw new Error("Burger menu button click failed.");
-  }
-
-  // Click on logout with id 'logout_sidebar_link'.
-  try {
-    await page.locator("#logout_sidebar_link").click({ timeout: 5000, retries: 3 });
-  } catch (error) {
-    console.error("Logout button click failed:", error);
-    throw new Error("Logout button click failed.");
-  }
-
-  // Keep the browser open after the test execution is complete.
   await browser.close();
 });
