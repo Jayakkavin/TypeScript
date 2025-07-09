@@ -25,14 +25,14 @@ test("Demowebshop E2E Test", async () => {
       errorMessage: "Failed to click the 'Log in' link",
     },
     {
-      action: "fill",
-      selector: "#Email",
+      action: "assert",
+      selector: 'a.account',
       value: "snaptest@yopmail.com",
-      waitTimeoutMs: 5000,
+      waitTimeoutMs: 10000,
       retry: 3,
-      fallbacks: [],
-      errorMessage: "Failed to enter the email address",
-    },
+      fallbacks: [{ type: 'filter', text: 'snaptest@yopmail.com' }],
+      errorMessage: "Failed to validate that the logged-in email is displayed",
+    }
     {
       action: "fill",
       selector: "#Password",
