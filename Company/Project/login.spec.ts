@@ -44,7 +44,7 @@ test("Demowebshop E2E Test", async () => {
     },
     {
       action: "click",
-      selector: 'button.button-1[type="submit"]',
+      selector: 'input.button-1[type="submit"]',
       value: "Log in",
       waitTimeoutMs: 5000,
       retry: 3,
