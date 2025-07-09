@@ -32,7 +32,7 @@ test("Demowebshop E2E Test", async () => {
       retry: 3,
       fallbacks: [{ type: 'filter', text: 'snaptest@yopmail.com' }],
       errorMessage: "Failed to validate that the logged-in email is displayed",
-    }
+    },
     {
       action: "fill",
       selector: "#Password",
