@@ -1,359 +1,261 @@
-import { test, expect, Page } from '@playwright/test';
+import { test, expect, chromium, Browser, BrowserContext, Page } from '@playwright/test';
 import fs from 'fs';
 
 const USER_TEST_STEPS = [
   "Navigate to https://www.saucedemo.com/.",
-  "Enter \"standard_user\" in the username field with id 'user-name'.",
-  "Enter \"secret_sauce\" in the password field with id 'password'.",
-  "Click the Login button with id 'login-button'.",
-  "Wait for 3 seconds for page to load.",
-  "Click on the product sort filter dropdown.",
-  "Click on Name (Z to A) option.",
-  "Wait for 3 seconds for page to load.",
-  "Locate the product \"Sauce Labs Backpack\" and click the Add to Cart button with id 'add-to-cart-sauce-labs-backpack'.",
-  "Click on the cart icon with class 'shopping_cart_link'.",
-  "Wait for 3 seconds for page to load.",
-  "Ensure that the product 'Sauce Labs Backpack' is present in the cart.",
-  "Wait for 3 seconds for page to load.",
-  "Then click on the checkout button with id 'checkout'.",
-  "Wait for 3 seconds for page to load.",
-  "Enter the first name as chaitanya in the first name field with id 'first-name'.",
-  "Enter the last name as Kompella in the last name field with id 'last-name'.",
-  "Enter the postal code as 62567352 in postal code field with id 'postal-code'.",
-  "Wait for 3 seconds for page to load.",
-  "Click on continue button with id 'continue'.",
-  "Wait for 3 seconds for page to load.",
-  "Click on finish button with id 'finish'.",
-  "You should see a message “Thank you for your order!”.",
-  "Wait for 3 seconds for page to load.",
-  "Then click on back to home button with id 'back-to-products'.",
-  "Wait for 3 seconds for page to load.",
-  "Click on the burger bar button with id 'react-burger-menu-btn'.",
-  "Wait for 3 seconds for page to load.",
-  "Click on logout button with id 'logout_sidebar_link'.",
+  "Enter \"standard_user\" in the username field with xpath //input[@id='user-name']",
+  "Enter \"secret_sauce\" in the password field with xpath //input[@id='password']",
+  "Click the Login button with xpath //input[@id='login-button']",
+  "Wait for the page to load completely using Javascript.",
+  "Click on the product sort filter dropdown with xpath //select[@class='product_sort_container']",
+  "Select Name (Z to A) option from the sort dropdown with xpath //select[@class='product_sort_container']/option[text()='Name (Z to A)']",
+  "Wait for the page to load completely using Javascript.",
+  "Locate the product \"Sauce Labs Backpack\" and click the Add to Cart button with xpath //div[contains(@class, 'inventory_item')]//div[contains(text(), 'Sauce Labs Backpack')]/ancestor::div[@class='inventory_item_label']/following-sibling::div[@class='pricebar']/button",
+  "Click on the cart icon to verify that the product has been added with xpath //div[@id='shopping_cart_container']/a",
+  "Wait for the page to load completely using Javascript.",
+  "Ensure that the product is present in the cart with xpath //div[@class='cart_item']//div[@class='inventory_item_name' and text()='Sauce Labs Backpack']",
+  "Wait for the page to load completely using Javascript.",
+  "Then click on the checkout button with xpath //button[@id='checkout']",
+  "Wait for the page to load completely using Javascript.",
+  "Enter the first name as chaitanya in the first name field with xpath //input[@id='first-name']",
+  "Enter the last name as Kompella in the last name field with xpath //input[@id='last-name']",
+  "Enter the postal code as 62567352 in postal code field with xpath //input[@id='postal-code']",
+  "Wait for the page to load completely using Javascript.",
+  "Click on continue button with xpath //input[@id='continue']",
+  "Wait for the page to load completely using Javascript.",
+  "Click on finish button with xpath //button[@id='finish']",
+  "You should see a message “Thank you for your order!” with xpath //h2[text()='Thank you for your order!']",
+  "Wait for the page to load completely using Javascript.",
+  "Then click on back to home button with xpath //button[@id='back-to-products']",
+  "Wait for the page to load completely using Javascript.",
+  "Click to burger bar with xpath //button[@id='react-burger-menu-btn']",
+  "Wait for the page to load completely using Javascript.",
+  "Click on logout with xpath //a[@id='logout_sidebar_link']",
   "Keep the browser open after the test execution is complete."
 ];
 
-const testSuiteName = 'SauceDemoTest';
-const outputFileName = 'test-results.json';
+const testName = 'SauceDemo Test';
+const outputFile = 'test-result.json';
 
-test.describe(testSuiteName, () => {
+test.describe(testName, () => {
+  let browser: Browser;
+  let context: BrowserContext;
   let page: Page;
-  let executionResults: any[] = [];
-  let executedSteps: string[] = [];
 
-  test.beforeAll(async ({ browser }) => {
-    page = await browser.newPage();
+  const executionResults: { [step: string]: { status: string; error?: string } } = {};
+  const executedSteps: string[] = [];
+
+  const executeStep = async (stepName: string, stepFunction: () => Promise<void>) => {
+    try {
+      console.log(`Executing step: ${stepName}`);
+      await stepFunction();
+      executionResults[stepName] = { status: 'passed' };
+      executedSteps.push(stepName);
+      console.log(`${stepName} - PASSED`);
+    } catch (e: any) {
+      const errorMessage = e.message || 'An error occurred';
+      executionResults[stepName] = { status: 'failed', error: errorMessage };
+      console.error(`${stepName} - FAILED: ${errorMessage}`);
+      
+      try {
+          await page.screenshot({ path: `screenshots/${stepName.replace(/[^a-zA-Z0-9]/g, '_')}.png` });
+      } catch (screenshotError: any) {
+          console.error(`Failed to capture screenshot for ${stepName}: ${screenshotError.message}`);
+      }
+
+      fs.writeFileSync(outputFile, JSON.stringify({
+        testName: testName,
+        steps: USER_TEST_STEPS,
+        executedSteps: executedSteps,
+        results: executionResults
+      }, null, 2));
+      
+      throw e;
+    } finally {
+      fs.writeFileSync(outputFile, JSON.stringify({
+        testName: testName,
+        steps: USER_TEST_STEPS,
+        executedSteps: executedSteps,
+        results: executionResults
+      }, null, 2));
+    }
+  };
+
+  test.beforeAll(async () => {
+    browser = await chromium.launch({
+      headless: true,
+      args: [
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        '--disable-dev-shm-usage',
+        '--disable-accelerated-2d-canvas',
+        '--no-first-run',
+        '--no-zygote',
+        '--single-process',
+        '--disable-gpu'
+      ]
+    });
+  });
+
+  test.beforeEach(async () => {
+    context = await browser.newContext({ viewport: { width: 1280, height: 720 } });
+    page = await context.newPage();
+    page.setDefaultTimeout(30000);
+    page.setDefaultNavigationTimeout(15000);
+  });
+
+  test.afterEach(async () => {
+    await context.close();
   });
 
   test.afterAll(async () => {
-    await page.close();
-    // Write results to file
-    fs.writeFileSync(outputFileName, JSON.stringify(executionResults, null, 2));
-    console.log(JSON.stringify(executionResults, null, 2));
+    await browser.close();
   });
 
-  async function executeStep(stepDescription: string, stepFunction: () => Promise<void>, executionResults: any[], executedSteps: string[]) {
-    let startTime = Date.now();
-    let endTime;
-    let success = false;
-    let errorMessage = '';
-
+  test('should perform a complete purchase flow', async () => {
     try {
-      await stepFunction();
-      success = true;
-      executedSteps.push(stepDescription);
-    } catch (e: any) {
-      success = false;
-      errorMessage = e.message;
-      console.error(`Step "${stepDescription}" failed: ${errorMessage}`);
-      try {
-        await page.screenshot({ path: `screenshots/${stepDescription.replace(/[^a-zA-Z0-9]/g, '_')}.png` });
-      } catch (screenshotError: any) {
-        console.error(`Failed to capture screenshot for step "${stepDescription}": ${screenshotError.message}`);
-      }
-    } finally {
-      endTime = Date.now();
-      const duration = endTime - startTime;
-
-      executionResults.push({
-        step: stepDescription,
-        success: success,
-        errorMessage: errorMessage,
-        duration: duration,
-        timestamp: new Date().toISOString()
+      await executeStep(USER_TEST_STEPS[0], async () => {
+        await page.goto('https://www.saucedemo.com/', { waitUntil: 'networkidle' });
       });
+
+      await executeStep(USER_TEST_STEPS[1], async () => {
+        await page.locator('//input[@id=\'user-name\']').waitFor({ timeout: 5000 });
+        await page.locator('//input[@id=\'user-name\']').fill('standard_user');
+      });
+
+      await executeStep(USER_TEST_STEPS[2], async () => {
+        await page.locator('//input[@id=\'password\']').waitFor({ timeout: 5000 });
+        await page.locator('//input[@id=\'password\']').fill('secret_sauce');
+      });
+
+      await executeStep(USER_TEST_STEPS[3], async () => {
+        await page.locator('//input[@id=\'login-button\']').click();
+        await page.waitForLoadState('networkidle');
+      });
+
+      await executeStep(USER_TEST_STEPS[4], async () => {
+        await page.waitForTimeout(1000);
+      });
+
+      await executeStep(USER_TEST_STEPS[5], async () => {
+        await page.locator('//select[@class=\'product_sort_container\']').click();
+      });
+
+      await executeStep(USER_TEST_STEPS[6], async () => {
+        await page.locator('//select[@class=\'product_sort_container\']/option[text()=\'Name (Z to A)\']').click();
+      });
+
+      await executeStep(USER_TEST_STEPS[7], async () => {
+        await page.waitForTimeout(1000);
+      });
+
+      await executeStep(USER_TEST_STEPS[8], async () => {
+        await page.locator('//div[contains(@class, \'inventory_item\')]//div[contains(text(), \'Sauce Labs Backpack\')]/ancestor::div[@class=\'inventory_item_label\']/following-sibling::div[@class=\'pricebar\']/button').click();
+      });
+
+      await executeStep(USER_TEST_STEPS[9], async () => {
+        await page.locator('//div[@id=\'shopping_cart_container\']/a').click();
+        await page.waitForLoadState('networkidle');
+      });
+
+      await executeStep(USER_TEST_STEPS[10], async () => {
+        await page.waitForTimeout(1000);
+      });
+
+      await executeStep(USER_TEST_STEPS[11], async () => {
+        await expect(page.locator('//div[@class=\'cart_item\']//div[@class=\'inventory_item_name\' and text()=\'Sauce Labs Backpack\']')).toBeVisible();
+      });
+
+      await executeStep(USER_TEST_STEPS[12], async () => {
+        await page.waitForTimeout(1000);
+      });
+
+      await executeStep(USER_TEST_STEPS[13], async () => {
+        await page.locator('//button[@id=\'checkout\']').click();
+        await page.waitForLoadState('networkidle');
+      });
+
+      await executeStep(USER_TEST_STEPS[14], async () => {
+        await page.waitForTimeout(1000);
+      });
+
+      await executeStep(USER_TEST_STEPS[15], async () => {
+        await page.locator('//input[@id=\'first-name\']').fill('chaitanya');
+      });
+
+      await executeStep(USER_TEST_STEPS[16], async () => {
+        await page.locator('//input[@id=\'last-name\']').fill('Kompella');
+      });
+
+      await executeStep(USER_TEST_STEPS[17], async () => {
+        await page.locator('//input[@id=\'postal-code\']').fill('62567352');
+      });
+
+      await executeStep(USER_TEST_STEPS[18], async () => {
+        await page.waitForTimeout(1000);
+      });
+
+      await executeStep(USER_TEST_STEPS[19], async () => {
+        await page.locator('//input[@id=\'continue\']').click();
+        await page.waitForLoadState('networkidle');
+      });
+
+      await executeStep(USER_TEST_STEPS[20], async () => {
+        await page.waitForTimeout(1000);
+      });
+
+      await executeStep(USER_TEST_STEPS[21], async () => {
+        await page.locator('//button[@id=\'finish\']').click();
+      });
+
+      await executeStep(USER_TEST_STEPS[22], async () => {
+        await expect(page.locator('//h2[text()=\'Thank you for your order!\']')).toBeVisible();
+      });
+
+      await executeStep(USER_TEST_STEPS[23], async () => {
+        await page.waitForTimeout(1000);
+      });
+
+      await executeStep(USER_TEST_STEPS[24], async () => {
+        await page.locator('//button[@id=\'back-to-products\']').click();
+      });
+
+      await executeStep(USER_TEST_STEPS[25], async () => {
+        await page.waitForTimeout(1000);
+      });
+
+      await executeStep(USER_TEST_STEPS[26], async () => {
+        await page.locator('//button[@id=\'react-burger-menu-btn\']').click();
+      });
+
+      await executeStep(USER_TEST_STEPS[27], async () => {
+        await page.waitForTimeout(1000);
+      });
+
+      await executeStep(USER_TEST_STEPS[28], async () => {
+        await page.locator('//a[@id=\'logout_sidebar_link\']').click();
+      });
+
+      await executeStep(USER_TEST_STEPS[29], async () => {
+        console.log('Test completed successfully. Browser will remain open.');
+      });
+
+    } catch (error) {
+      console.error('Test failed:', error);
+      fs.writeFileSync(outputFile, JSON.stringify({
+        testName: testName,
+        steps: USER_TEST_STEPS,
+        executedSteps: executedSteps,
+        results: executionResults
+      }, null, 2));
+      throw error;
+    } finally {
+      fs.writeFileSync(outputFile, JSON.stringify({
+        testName: testName,
+        steps: USER_TEST_STEPS,
+        executedSteps: executedSteps,
+        results: executionResults
+      }, null, 2));
     }
-  }
-
-  test('SauceDemo Test', async () => {
-    await test.step("Navigate to https://www.saucedemo.com/", async () => {
-      await executeStep(
-        "Navigate to https://www.saucedemo.com/",
-        async () => {
-          await page.goto("https://www.saucedemo.com/", { waitUntil: 'networkidle' });
-        },
-        executionResults,
-        executedSteps
-      );
-    });
-
-    await test.step("Enter username", async () => {
-      await executeStep(
-        "Enter 'standard_user' in the username field",
-        async () => {
-          await page.locator("#user-name").waitFor({ timeout: 5000 });
-          await page.locator("#user-name").fill("standard_user");
-        },
-        executionResults,
-        executedSteps
-      );
-    });
-
-    await test.step("Enter password", async () => {
-      await executeStep(
-        "Enter 'secret_sauce' in the password field",
-        async () => {
-          await page.locator("#password").waitFor({ timeout: 5000 });
-          await page.locator("#password").fill("secret_sauce");
-        },
-        executionResults,
-        executedSteps
-      );
-    });
-
-    await test.step("Click login", async () => {
-      await executeStep(
-        "Click the Login button",
-        async () => {
-          await page.locator("#login-button").waitFor({ timeout: 5000 });
-          await page.locator("#login-button").click();
-          await page.waitForSelector("#inventory_container", { timeout: 5000 });
-        },
-        executionResults,
-        executedSteps
-      );
-    });
-
-    await test.step("Sort products", async () => {
-      await executeStep(
-        "Click on the product sort filter dropdown",
-        async () => {
-          await page.locator(".product_sort_container").waitFor({ timeout: 5000 });
-          await page.locator(".product_sort_container").click();
-        },
-        executionResults,
-        executedSteps
-      );
-
-      await executeStep(
-        "Click on Name (Z to A) option",
-        async () => {
-          await page.locator("xpath=//option[text()='Name (Z to A)']").waitFor({ timeout: 5000 });
-          await page.locator("xpath=//option[text()='Name (Z to A)']").click();
-        },
-        executionResults,
-        executedSteps
-      );
-
-      await executeStep(
-        "Wait for the sorting to complete",
-        async () => {
-          await page.waitForTimeout(3000);
-        },
-        executionResults,
-        executedSteps
-      );
-    });
-
-    await test.step("Add to cart", async () => {
-      await executeStep(
-        "Locate the product 'Sauce Labs Backpack' and click the Add to Cart button",
-        async () => {
-          await page.locator("#add-to-cart-sauce-labs-backpack").waitFor({ timeout: 5000 });
-          await page.locator("#add-to-cart-sauce-labs-backpack").click();
-        },
-        executionResults,
-        executedSteps
-      );
-    });
-
-    await test.step("Go to cart", async () => {
-      await executeStep(
-        "Click on the cart icon",
-        async () => {
-          await page.locator(".shopping_cart_link").waitFor({ timeout: 5000 });
-          await page.locator(".shopping_cart_link").click();
-          await page.waitForSelector(".cart_list", { timeout: 5000 });
-        },
-        executionResults,
-        executedSteps
-      );
-    });
-
-    await test.step("Verify item in cart", async () => {
-      await executeStep(
-        "Ensure that the product 'Sauce Labs Backpack' is present in the cart",
-        async () => {
-          await page.locator("xpath=//div[@class='inventory_item_name' and text()='Sauce Labs Backpack']").waitFor({ timeout: 5000 });
-          expect(await page.locator("xpath=//div[@class='inventory_item_name' and text()='Sauce Labs Backpack']").isVisible()).toBe(true);
-        },
-        executionResults,
-        executedSteps
-      );
-
-      await executeStep(
-        "Wait for a few seconds",
-        async () => {
-          await page.waitForTimeout(3000);
-        },
-        executionResults,
-        executedSteps
-      );
-    });
-
-    await test.step("Go to checkout", async () => {
-      await executeStep(
-        "Click on the checkout button",
-        async () => {
-          await page.locator("#checkout").waitFor({ timeout: 5000 });
-          await page.locator("#checkout").click();
-          await page.waitForSelector("#checkout_info_container", { timeout: 5000 });
-        },
-        executionResults,
-        executedSteps
-      );
-    });
-
-    await test.step("Fill checkout information", async () => {
-      await executeStep(
-        "Enter the first name as 'chaitanya' in the first name field",
-        async () => {
-          await page.locator("#first-name").waitFor({ timeout: 5000 });
-          await page.locator("#first-name").fill("chaitanya");
-        },
-        executionResults,
-        executedSteps
-      );
-
-      await executeStep(
-        "Enter the last name as 'Kompella' in the last name field",
-        async () => {
-          await page.locator("#last-name").waitFor({ timeout: 5000 });
-          await page.locator("#last-name").fill("Kompella");
-        },
-        executionResults,
-        executedSteps
-      );
-
-      await executeStep(
-        "Enter the postal code as '62567352' in postal code field",
-        async () => {
-          await page.locator("#postal-code").waitFor({ timeout: 5000 });
-          await page.locator("#postal-code").fill("62567352");
-        },
-        executionResults,
-        executedSteps
-      );
-
-      await executeStep(
-        "Wait for a few seconds",
-        async () => {
-          await page.waitForTimeout(3000);
-        },
-        executionResults,
-        executedSteps
-      );
-    });
-
-    await test.step("Continue checkout", async () => {
-      await executeStep(
-        "Click on continue button",
-        async () => {
-          await page.locator("#continue").waitFor({ timeout: 5000 });
-          await page.locator("#continue").click();
-          await page.waitForSelector(".summary_info", { timeout: 5000 });
-        },
-        executionResults,
-        executedSteps
-      );
-    });
-
-    await test.step("Finish checkout", async () => {
-      await executeStep(
-        "Click on finish button",
-        async () => {
-          await page.locator("#finish").waitFor({ timeout: 5000 });
-          await page.locator("#finish").click();
-        },
-        executionResults,
-        executedSteps
-      );
-    });
-
-    await test.step("Verify thank you message", async () => {
-      await executeStep(
-        "Verify the 'Thank you for your order!' message is displayed",
-        async () => {
-          await page.locator("xpath=//h2[text()='Thank you for your order!']").waitFor({ timeout: 5000 });
-          expect(await page.locator("xpath=//h2[text()='Thank you for your order!']").isVisible()).toBe(true);
-        },
-        executionResults,
-        executedSteps
-      );
-
-      await executeStep(
-        "Wait for a few seconds",
-        async () => {
-          await page.waitForTimeout(3000);
-        },
-        executionResults,
-        executedSteps
-      );
-    });
-
-    await test.step("Go back home", async () => {
-      await executeStep(
-        "Click on back to home button",
-        async () => {
-          await page.locator("#back-to-products").waitFor({ timeout: 5000 });
-          await page.locator("#back-to-products").click();
-        },
-        executionResults,
-        executedSteps
-      );
-
-      await executeStep(
-        "Wait for a few seconds",
-        async () => {
-          await page.waitForTimeout(3000);
-        },
-        executionResults,
-        executedSteps
-      );
-    });
-
-    await test.step("Logout", async () => {
-      await executeStep(
-        "Click on the burger bar",
-        async () => {
-          await page.locator("#react-burger-menu-btn").waitFor({ timeout: 5000 });
-          await page.locator("#react-burger-menu-btn").click();
-          await page.waitForSelector(".bm-menu", { timeout: 5000 });
-        },
-        executionResults,
-        executedSteps
-      );
-
-      await executeStep(
-        "Click on logout",
-        async () => {
-          await page.locator("#logout_sidebar_link").waitFor({ timeout: 5000 });
-          await page.locator("#logout_sidebar_link").click();
-        },
-        executionResults,
-        executedSteps
-      );
-    });
   });
 });
