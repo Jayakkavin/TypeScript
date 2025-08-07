@@ -1,219 +1,359 @@
-import { test, expect, chromium, Page } from "@playwright/test";
+import { test, expect, Page } from '@playwright/test';
+import fs from 'fs';
 
-test("SauceDemo Test", async () => {
-  const browser = await chromium.launch({ headless: false });
-  const context = await browser.newContext();
-  const page = await context.newPage();
+const USER_TEST_STEPS = [
+  "Navigate to https://www.saucedemo.com/.",
+  "Enter \"standard_user\" in the username field with id 'user-name'.",
+  "Enter \"secret_sauce\" in the password field with id 'password'.",
+  "Click the Login button with id 'login-button'.",
+  "Wait for 3 seconds for page to load.",
+  "Click on the product sort filter dropdown.",
+  "Click on Name (Z to A) option.",
+  "Wait for 3 seconds for page to load.",
+  "Locate the product \"Sauce Labs Backpack\" and click the Add to Cart button with id 'add-to-cart-sauce-labs-backpack'.",
+  "Click on the cart icon with class 'shopping_cart_link'.",
+  "Wait for 3 seconds for page to load.",
+  "Ensure that the product 'Sauce Labs Backpack' is present in the cart.",
+  "Wait for 3 seconds for page to load.",
+  "Then click on the checkout button with id 'checkout'.",
+  "Wait for 3 seconds for page to load.",
+  "Enter the first name as chaitanya in the first name field with id 'first-name'.",
+  "Enter the last name as Kompella in the last name field with id 'last-name'.",
+  "Enter the postal code as 62567352 in postal code field with id 'postal-code'.",
+  "Wait for 3 seconds for page to load.",
+  "Click on continue button with id 'continue'.",
+  "Wait for 3 seconds for page to load.",
+  "Click on finish button with id 'finish'.",
+  "You should see a message “Thank you for your order!”.",
+  "Wait for 3 seconds for page to load.",
+  "Then click on back to home button with id 'back-to-products'.",
+  "Wait for 3 seconds for page to load.",
+  "Click on the burger bar button with id 'react-burger-menu-btn'.",
+  "Wait for 3 seconds for page to load.",
+  "Click on logout button with id 'logout_sidebar_link'.",
+  "Keep the browser open after the test execution is complete."
+];
 
-  // Helper function for robust clicking with retries
-  async function safeClick(
-    page: Page,
-    selector: string,
-    errorMessage: string,
-    retries: number = 3
-  ): Promise<void> {
-    for (let i = 0; i <= retries; i++) {
+const testSuiteName = 'SauceDemoTest';
+const outputFileName = 'test-results.json';
+
+test.describe(testSuiteName, () => {
+  let page: Page;
+  let executionResults: any[] = [];
+  let executedSteps: string[] = [];
+
+  test.beforeAll(async ({ browser }) => {
+    page = await browser.newPage();
+  });
+
+  test.afterAll(async () => {
+    await page.close();
+    // Write results to file
+    fs.writeFileSync(outputFileName, JSON.stringify(executionResults, null, 2));
+    console.log(JSON.stringify(executionResults, null, 2));
+  });
+
+  async function executeStep(stepDescription: string, stepFunction: () => Promise<void>, executionResults: any[], executedSteps: string[]) {
+    let startTime = Date.now();
+    let endTime;
+    let success = false;
+    let errorMessage = '';
+
+    try {
+      await stepFunction();
+      success = true;
+      executedSteps.push(stepDescription);
+    } catch (e: any) {
+      success = false;
+      errorMessage = e.message;
+      console.error(`Step "${stepDescription}" failed: ${errorMessage}`);
       try {
-        await page.locator(selector).click({ timeout: 5000 });
-        return;
-      } catch (error) {
-        if (i === retries) {
-          console.error(`${errorMessage}: ${error}`);
-          throw new Error(`${errorMessage} after ${retries} retries`);
-        }
-        console.log(`Attempt ${i + 1} failed. Retrying...`);
-        await page.waitForTimeout(1000); // Wait before retrying
+        await page.screenshot({ path: `screenshots/${stepDescription.replace(/[^a-zA-Z0-9]/g, '_')}.png` });
+      } catch (screenshotError: any) {
+        console.error(`Failed to capture screenshot for step "${stepDescription}": ${screenshotError.message}`);
       }
+    } finally {
+      endTime = Date.now();
+      const duration = endTime - startTime;
+
+      executionResults.push({
+        step: stepDescription,
+        success: success,
+        errorMessage: errorMessage,
+        duration: duration,
+        timestamp: new Date().toISOString()
+      });
     }
   }
 
-  // Helper function for robust filling with retries
-  async function safeFill(
-    page: Page,
-    selector: string,
-    value: string,
-    errorMessage: string,
-    retries: number = 3
-  ): Promise<void> {
-    for (let i = 0; i <= retries; i++) {
-      try {
-        await page.locator(selector).fill(value, { timeout: 5000 });
-        return;
-      } catch (error) {
-        if (i === retries) {
-          console.error(`${errorMessage}: ${error}`);
-          throw new Error(`${errorMessage} after ${retries} retries`);
-        }
-        console.log(`Attempt ${i + 1} failed. Retrying...`);
-        await page.waitForTimeout(1000); // Wait before retrying
-      }
-    }
-  }
-
-  // Step 1: Navigate to https://www.saucedemo.com/
-  try {
-    await page.goto("https://www.saucedemo.com/", {
-      waitUntil: "networkidle",
-      timeout: 10000,
+  test('SauceDemo Test', async () => {
+    await test.step("Navigate to https://www.saucedemo.com/", async () => {
+      await executeStep(
+        "Navigate to https://www.saucedemo.com/",
+        async () => {
+          await page.goto("https://www.saucedemo.com/", { waitUntil: 'networkidle' });
+        },
+        executionResults,
+        executedSteps
+      );
     });
-  } catch (error) {
-    console.error(`Navigation failed: ${error}`);
-    throw new Error(`Navigation to saucedemo failed`);
-  }
 
-  // Step 2: Enter "standard_user" in the username field
-  await safeFill(
-    page,
-    "//input[@id='user-name']",
-    "standard_user",
-    "Failed to fill username field"
-  );
+    await test.step("Enter username", async () => {
+      await executeStep(
+        "Enter 'standard_user' in the username field",
+        async () => {
+          await page.locator("#user-name").waitFor({ timeout: 5000 });
+          await page.locator("#user-name").fill("standard_user");
+        },
+        executionResults,
+        executedSteps
+      );
+    });
 
-  // Step 3: Enter "secret_sauce" in the password field
-  await safeFill(
-    page,
-    "//input[@id='password']",
-    "secret_sauce",
-    "Failed to fill password field"
-  );
+    await test.step("Enter password", async () => {
+      await executeStep(
+        "Enter 'secret_sauce' in the password field",
+        async () => {
+          await page.locator("#password").waitFor({ timeout: 5000 });
+          await page.locator("#password").fill("secret_sauce");
+        },
+        executionResults,
+        executedSteps
+      );
+    });
 
-  // Step 4: Click the Login button
-  await safeClick(
-    page,
-    "//input[@id='login-button']",
-    "Failed to click login button"
-  );
+    await test.step("Click login", async () => {
+      await executeStep(
+        "Click the Login button",
+        async () => {
+          await page.locator("#login-button").waitFor({ timeout: 5000 });
+          await page.locator("#login-button").click();
+          await page.waitForSelector("#inventory_container", { timeout: 5000 });
+        },
+        executionResults,
+        executedSteps
+      );
+    });
 
-  // Step 5: Wait for 3 seconds for page to load.
-  await page.waitForTimeout(3000);
+    await test.step("Sort products", async () => {
+      await executeStep(
+        "Click on the product sort filter dropdown",
+        async () => {
+          await page.locator(".product_sort_container").waitFor({ timeout: 5000 });
+          await page.locator(".product_sort_container").click();
+        },
+        executionResults,
+        executedSteps
+      );
 
-  // Step 6: Click on the product sort filter dropdown
-  await safeClick(
-    page,
-    "//select[@class='product_sort_container']",
-    "Failed to click product sort filter dropdown"
-  );
+      await executeStep(
+        "Click on Name (Z to A) option",
+        async () => {
+          await page.locator("xpath=//option[text()='Name (Z to A)']").waitFor({ timeout: 5000 });
+          await page.locator("xpath=//option[text()='Name (Z to A)']").click();
+        },
+        executionResults,
+        executedSteps
+      );
 
-  // Step 7: Select Name (Z to A) from the product sort filter dropdown
-  await safeClick(
-    page,
-    "//select[@class='product_sort_container'] >> text=Name (Z to A)",
-    "Failed to select Name (Z to A)"
-  );
+      await executeStep(
+        "Wait for the sorting to complete",
+        async () => {
+          await page.waitForTimeout(3000);
+        },
+        executionResults,
+        executedSteps
+      );
+    });
 
-  // Step 8: Wait for 3 seconds for page to load.
-  await page.waitForTimeout(3000);
+    await test.step("Add to cart", async () => {
+      await executeStep(
+        "Locate the product 'Sauce Labs Backpack' and click the Add to Cart button",
+        async () => {
+          await page.locator("#add-to-cart-sauce-labs-backpack").waitFor({ timeout: 5000 });
+          await page.locator("#add-to-cart-sauce-labs-backpack").click();
+        },
+        executionResults,
+        executedSteps
+      );
+    });
 
-  // Step 9: Locate the product "Sauce Labs Backpack" and click the Add to Cart button
-  await safeClick(
-    page,
-    "//button[@id='add-to-cart-sauce-labs-backpack']",
-    "Failed to click Add to Cart for Sauce Labs Backpack"
-  );
+    await test.step("Go to cart", async () => {
+      await executeStep(
+        "Click on the cart icon",
+        async () => {
+          await page.locator(".shopping_cart_link").waitFor({ timeout: 5000 });
+          await page.locator(".shopping_cart_link").click();
+          await page.waitForSelector(".cart_list", { timeout: 5000 });
+        },
+        executionResults,
+        executedSteps
+      );
+    });
 
-  // Step 10: Click on the cart icon to verify that the product has been added
-  await safeClick(
-    page,
-    "//a[@class='shopping_cart_link']",
-    "Failed to click cart icon"
-  );
+    await test.step("Verify item in cart", async () => {
+      await executeStep(
+        "Ensure that the product 'Sauce Labs Backpack' is present in the cart",
+        async () => {
+          await page.locator("xpath=//div[@class='inventory_item_name' and text()='Sauce Labs Backpack']").waitFor({ timeout: 5000 });
+          expect(await page.locator("xpath=//div[@class='inventory_item_name' and text()='Sauce Labs Backpack']").isVisible()).toBe(true);
+        },
+        executionResults,
+        executedSteps
+      );
 
-  // Step 11: Wait for 3 seconds for page to load.
-  await page.waitForTimeout(3000);
+      await executeStep(
+        "Wait for a few seconds",
+        async () => {
+          await page.waitForTimeout(3000);
+        },
+        executionResults,
+        executedSteps
+      );
+    });
 
-  // Step 12: Ensure that the product 'Sauce Labs Backpack' is present in the cart
-  try {
-    await expect(
-      page.locator(
-        "//div[@class='inventory_item_name' and text()='Sauce Labs Backpack']"
-      )
-    ).toBeVisible({ timeout: 10000 });
-  } catch (error) {
-    console.error(`Sauce Labs Backpack not found in cart: ${error}`);
-    throw new Error("Sauce Labs Backpack not found in cart");
-  }
+    await test.step("Go to checkout", async () => {
+      await executeStep(
+        "Click on the checkout button",
+        async () => {
+          await page.locator("#checkout").waitFor({ timeout: 5000 });
+          await page.locator("#checkout").click();
+          await page.waitForSelector("#checkout_info_container", { timeout: 5000 });
+        },
+        executionResults,
+        executedSteps
+      );
+    });
 
-  // Step 13: Wait for 3 seconds for page to load.
-  await page.waitForTimeout(3000);
+    await test.step("Fill checkout information", async () => {
+      await executeStep(
+        "Enter the first name as 'chaitanya' in the first name field",
+        async () => {
+          await page.locator("#first-name").waitFor({ timeout: 5000 });
+          await page.locator("#first-name").fill("chaitanya");
+        },
+        executionResults,
+        executedSteps
+      );
 
-  // Step 14: Then click on the checkout button
-  await safeClick(page, "//button[@id='checkout']", "Failed to click checkout");
+      await executeStep(
+        "Enter the last name as 'Kompella' in the last name field",
+        async () => {
+          await page.locator("#last-name").waitFor({ timeout: 5000 });
+          await page.locator("#last-name").fill("Kompella");
+        },
+        executionResults,
+        executedSteps
+      );
 
-  // Step 15: Wait for 3 seconds for page to load.
-  await page.waitForTimeout(3000);
+      await executeStep(
+        "Enter the postal code as '62567352' in postal code field",
+        async () => {
+          await page.locator("#postal-code").waitFor({ timeout: 5000 });
+          await page.locator("#postal-code").fill("62567352");
+        },
+        executionResults,
+        executedSteps
+      );
 
-  // Step 16: Enter the first name as chaitanya in the first name field
-  await safeFill(
-    page,
-    "//input[@id='first-name']",
-    "chaitanya",
-    "Failed to fill first name"
-  );
+      await executeStep(
+        "Wait for a few seconds",
+        async () => {
+          await page.waitForTimeout(3000);
+        },
+        executionResults,
+        executedSteps
+      );
+    });
 
-  // Step 17: Enter the last name as Kompella in the last name field
-  await safeFill(
-    page,
-    "//input[@id='last-name']",
-    "Kompella",
-    "Failed to fill last name"
-  );
+    await test.step("Continue checkout", async () => {
+      await executeStep(
+        "Click on continue button",
+        async () => {
+          await page.locator("#continue").waitFor({ timeout: 5000 });
+          await page.locator("#continue").click();
+          await page.waitForSelector(".summary_info", { timeout: 5000 });
+        },
+        executionResults,
+        executedSteps
+      );
+    });
 
-  // Step 18: Enter the postal code as 62567352 in postal code field
-  await safeFill(
-    page,
-    "//input[@id='postal-code']",
-    "62567352",
-    "Failed to fill postal code"
-  );
+    await test.step("Finish checkout", async () => {
+      await executeStep(
+        "Click on finish button",
+        async () => {
+          await page.locator("#finish").waitFor({ timeout: 5000 });
+          await page.locator("#finish").click();
+        },
+        executionResults,
+        executedSteps
+      );
+    });
 
-  // Step 19: Wait for 3 seconds for page to load.
-  await page.waitForTimeout(3000);
+    await test.step("Verify thank you message", async () => {
+      await executeStep(
+        "Verify the 'Thank you for your order!' message is displayed",
+        async () => {
+          await page.locator("xpath=//h2[text()='Thank you for your order!']").waitFor({ timeout: 5000 });
+          expect(await page.locator("xpath=//h2[text()='Thank you for your order!']").isVisible()).toBe(true);
+        },
+        executionResults,
+        executedSteps
+      );
 
-  // Step 20: Click on continue button
-  await safeClick(page, "//input[@id='continue']", "Failed to click continue");
+      await executeStep(
+        "Wait for a few seconds",
+        async () => {
+          await page.waitForTimeout(3000);
+        },
+        executionResults,
+        executedSteps
+      );
+    });
 
-  // Step 21: Wait for 3 seconds for page to load.
-  await page.waitForTimeout(3000);
+    await test.step("Go back home", async () => {
+      await executeStep(
+        "Click on back to home button",
+        async () => {
+          await page.locator("#back-to-products").waitFor({ timeout: 5000 });
+          await page.locator("#back-to-products").click();
+        },
+        executionResults,
+        executedSteps
+      );
 
-  // Step 22: Click on finish button
-  await safeClick(page, "//button[@id='finish']", "Failed to click finish");
+      await executeStep(
+        "Wait for a few seconds",
+        async () => {
+          await page.waitForTimeout(3000);
+        },
+        executionResults,
+        executedSteps
+      );
+    });
 
-  // Step 23: You should see a message “Thank you for your order!”
-  try {
-    await expect(
-      page.locator("//h2[text()='Thank you for your order!']")
-    ).toBeVisible({ timeout: 10000 });
-  } catch (error) {
-    console.error(`Thank you message not found: ${error}`);
-    throw new Error("Thank you message not found");
-  }
+    await test.step("Logout", async () => {
+      await executeStep(
+        "Click on the burger bar",
+        async () => {
+          await page.locator("#react-burger-menu-btn").waitFor({ timeout: 5000 });
+          await page.locator("#react-burger-menu-btn").click();
+          await page.waitForSelector(".bm-menu", { timeout: 5000 });
+        },
+        executionResults,
+        executedSteps
+      );
 
-  // Step 24: Wait for 3 seconds for page to load.
-  await page.waitForTimeout(3000);
-
-  // Step 25: Then click on back to home button
-  await safeClick(
-    page,
-    "//button[@id='back-to-products']",
-    "Failed to click back to home"
-  );
-
-  // Step 26: Wait for 3 seconds for page to load.
-  await page.waitForTimeout(3000);
-
-  // Step 27: Click on the burger bar
-  await safeClick(
-    page,
-    "//button[@id='react-burger-menu-btn']",
-    "Failed to click burger bar"
-  );
-
-  // Step 28: Wait for 3 seconds for page to load.
-  await page.waitForTimeout(3000);
-
-  // Step 29: Click on logout
-  await safeClick(page, "//a[@id='logout_sidebar_link']", "Failed to click logout");
-
-  // Step 30: Keep the browser open after the test execution is complete.
-  // await browser.close(); // Commented out to keep browser open
+      await executeStep(
+        "Click on logout",
+        async () => {
+          await page.locator("#logout_sidebar_link").waitFor({ timeout: 5000 });
+          await page.locator("#logout_sidebar_link").click();
+        },
+        executionResults,
+        executedSteps
+      );
+    });
+  });
 });
