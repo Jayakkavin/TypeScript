@@ -1,12 +1,524 @@
 import { test, expect, chromium, Browser, Page, BrowserContext } from "@playwright/test";
 
-test.describe("SauceDemo End-to-End Test", () => {
-  test.setTimeout(10000);
+test.setTimeout(120000);
 
-  test("should complete the purchase flow successfully", async () => {
-    const browser: Browser = await chromium.launch({
+test('Generated Test', async () => {
+  const originalUserSteps = [
+    "Navigate to https://www.saucedemo.com/",
+    "Enter \"standard_user\" in the username field with id 'user-name'",
+    "Enter \"secret_sauce\" in the password field with id 'password'",
+    "Click the Login button with id 'login-button'",
+    "Wait for the page to load completely",
+    "Wait for 3 seconds",
+    "Click on the product sort filter dropdown",
+    "Click on Name (Z to A) option",
+    "Wait for the page to load completely",
+    "Wait for 3 seconds",
+    "Locate the product \"Sauce Labs Backpack\" and click the Add to Cart button with id 'add-to-cart-sauce-labs-backpack'",
+    "Click on the cart icon",
+    "Wait for the page to load completely",
+    "Wait for 3 seconds",
+    "Ensure that the product \"Sauce Labs Backpack\" is present in the cart",
+    "Wait for the page to load completely",
+    "Wait for 3 seconds",
+    "Click on the checkout button with id 'checkout'",
+    "Wait for the page to load completely",
+    "Wait for 3 seconds",
+    "Enter the first name as chaitanya in the first name field",
+    "Enter the last name as Kompella in the last name field",
+    "Enter the postal code as 62567352 in postal code field",
+    "Wait for the page to load completely",
+    "Wait for 3 seconds",
+    "Click on continue button",
+    "Wait for the page to load completely",
+    "Wait for 3 seconds",
+    "Click on finish button",
+    "You should see a message “Thank you for your order!”",
+    "Wait for the page to load completely",
+    "Wait for 3 seconds",
+    "Click on back to home button",
+    "Wait for the page to load completely",
+    "Wait for 3 seconds",
+    "Click to burger bar",
+    "Wait for the page to load completely",
+    "Wait for 3 seconds",
+    "Click on logout"
+  ];
+
+  const steps = [
+    {
+      "action": "goto",
+      "selector": "https://www.saucedemo.com/",
+      "value": null,
+      "waitTimeoutMs": 10000,
+      "retry": 3,
+      "fallbacks": [],
+      "errorMessage": "Failed to navigate to the login page after multiple retries.",
+      "stepDescription": "Navigate to the login page."
+    },
+    {
+      "action": "evaluate",
+      "selector": "document",
+      "value": "document.readyState === 'complete'",
+      "waitTimeoutMs": 30000,
+      "retry": 3,
+      "fallbacks": [],
+      "errorMessage": "Page did not fully load within the specified timeout.",
+      "stepDescription": "Wait for document to be fully loaded before entering username"
+    },
+    {
+      "action": "fill",
+      "selector": "//input[@id='user-name']",
+      "value": "standard_user",
+      "waitTimeoutMs": 5000,
+      "retry": 2,
+      "fallbacks": [],
+      "errorMessage": "Failed to enter username after multiple retries.",
+      "stepDescription": "Enter username."
+    },
+    {
+      "action": "evaluate",
+      "selector": "document",
+      "value": "document.readyState === 'complete'",
+      "waitTimeoutMs": 30000,
+      "retry": 3,
+      "fallbacks": [],
+      "errorMessage": "Page did not fully load within the specified timeout.",
+      "stepDescription": "Wait for document to be fully loaded before entering password"
+    },
+    {
+      "action": "fill",
+      "selector": "//input[@id='password']",
+      "value": "secret_sauce",
+      "waitTimeoutMs": 5000,
+      "retry": 2,
+      "fallbacks": [],
+      "errorMessage": "Failed to enter password after multiple retries.",
+      "stepDescription": "Enter password."
+    },
+    {
+      "action": "evaluate",
+      "selector": "document",
+      "value": "document.readyState === 'complete'",
+      "waitTimeoutMs": 30000,
+      "retry": 3,
+      "fallbacks": [],
+      "errorMessage": "Page did not fully load within the specified timeout.",
+      "stepDescription": "Wait for document to be fully loaded before clicking login"
+    },
+    {
+      "action": "click",
+      "selector": "//input[@id='login-button']",
+      "value": null,
+      "waitTimeoutMs": 5000,
+      "retry": 3,
+      "fallbacks": [],
+      "errorMessage": "Failed to click the login button after multiple retries.",
+      "stepDescription": "Click the login button."
+    },
+    {
+      "action": "waitForTimeout",
+      "value": "3000",
+      "waitTimeoutMs": 3000,
+      "retry": 0,
+      "fallbacks": [],
+      "errorMessage": "Wait timed out after 3 seconds.",
+      "stepDescription": "Wait for 3 seconds after clicking login"
+    },
+    {
+      "action": "evaluate",
+      "selector": "document",
+      "value": "document.readyState === 'complete'",
+      "waitTimeoutMs": 30000,
+      "retry": 3,
+      "fallbacks": [],
+      "errorMessage": "Page did not fully load within the specified timeout.",
+      "stepDescription": "Wait for document to be fully loaded before clicking sort dropdown"
+    },
+    {
+      "action": "click",
+      "selector": "//select[@class='product_sort_container']",
+      "value": null,
+      "waitTimeoutMs": 5000,
+      "retry": 3,
+      "fallbacks": [],
+      "errorMessage": "Failed to click the product sort filter dropdown after multiple retries.",
+      "stepDescription": "Click on the product sort filter dropdown"
+    },
+    {
+      "action": "evaluate",
+      "selector": "document",
+      "value": "document.readyState === 'complete'",
+      "waitTimeoutMs": 30000,
+      "retry": 3,
+      "fallbacks": [],
+      "errorMessage": "Page did not fully load within the specified timeout.",
+      "stepDescription": "Wait for document to be fully loaded before clicking sort option"
+    },
+    {
+      "action": "click",
+      "selector": "//option[text()='Name (Z to A)']",
+      "value": null,
+      "waitTimeoutMs": 5000,
+      "retry": 3,
+      "fallbacks": [],
+      "errorMessage": "Failed to click the Name (Z to A) option after multiple retries.",
+      "stepDescription": "Click on Name (Z to A) option"
+    },
+    {
+      "action": "waitForTimeout",
+      "value": "3000",
+      "waitTimeoutMs": 3000,
+      "retry": 0,
+      "fallbacks": [],
+      "errorMessage": "Wait timed out after 3 seconds.",
+      "stepDescription": "Wait for 3 seconds after clicking sort option"
+    },
+    {
+      "action": "evaluate",
+      "selector": "document",
+      "value": "document.readyState === 'complete'",
+      "waitTimeoutMs": 30000,
+      "retry": 3,
+      "fallbacks": [],
+      "errorMessage": "Page did not fully load within the specified timeout.",
+      "stepDescription": "Wait for document to be fully loaded before clicking add to cart"
+    },
+    {
+      "action": "click",
+      "selector": "//div[contains(@class, 'inventory_item_name') and text()='Sauce Labs Backpack']/ancestor::div[@class='inventory_item_description']//button[contains(@data-test, 'add-to-cart')]",
+      "value": null,
+      "waitTimeoutMs": 5000,
+      "retry": 3,
+      "fallbacks": [],
+      "errorMessage": "Failed to click the Add to Cart button for Sauce Labs Backpack after multiple retries.",
+      "stepDescription": "Locate the product 'Sauce Labs Backpack' and click the Add to Cart button."
+    },
+    {
+      "action": "evaluate",
+      "selector": "document",
+      "value": "document.readyState === 'complete'",
+      "waitTimeoutMs": 30000,
+      "retry": 3,
+      "fallbacks": [],
+      "errorMessage": "Page did not fully load within the specified timeout.",
+      "stepDescription": "Wait for document to be fully loaded before clicking cart icon"
+    },
+    {
+      "action": "click",
+      "selector": "//div[@id='shopping_cart_container']/a",
+      "value": null,
+      "waitTimeoutMs": 5000,
+      "retry": 3,
+      "fallbacks": [],
+      "errorMessage": "Failed to click the cart icon after multiple retries.",
+      "stepDescription": "Click on the cart icon."
+    },
+    {
+      "action": "waitForTimeout",
+      "value": "3000",
+      "waitTimeoutMs": 3000,
+      "retry": 0,
+      "fallbacks": [],
+      "errorMessage": "Wait timed out after 3 seconds.",
+      "stepDescription": "Wait for 3 seconds after clicking cart icon"
+    },
+    {
+      "action": "evaluate",
+      "selector": "document",
+      "value": "document.readyState === 'complete'",
+      "waitTimeoutMs": 30000,
+      "retry": 3,
+      "fallbacks": [],
+      "errorMessage": "Page did not fully load within the specified timeout.",
+      "stepDescription": "Wait for document to be fully loaded before verifying product in cart"
+    },
+    {
+      "action": "isVisible",
+      "selector": "//div[@class='cart_item']//div[@class='inventory_item_name' and text()='Sauce Labs Backpack']",
+      "value": null,
+      "waitTimeoutMs": 5000,
+      "retry": 3,
+      "fallbacks": [],
+      "errorMessage": "Failed to verify that the product is present in the cart after multiple retries.",
+      "stepDescription": "Ensure that the product is present in the cart."
+    },
+    {
+      "action": "waitForTimeout",
+      "value": "3000",
+      "waitTimeoutMs": 3000,
+      "retry": 0,
+      "fallbacks": [],
+      "errorMessage": "Wait timed out after 3 seconds.",
+      "stepDescription": "Wait for 3 seconds after verifying product in cart"
+    },
+    {
+      "action": "evaluate",
+      "selector": "document",
+      "value": "document.readyState === 'complete'",
+      "waitTimeoutMs": 30000,
+      "retry": 3,
+      "fallbacks": [],
+      "errorMessage": "Page did not fully load within the specified timeout.",
+      "stepDescription": "Wait for document to be fully loaded before clicking checkout"
+    },
+    {
+      "action": "click",
+      "selector": "//button[@id='checkout']",
+      "value": null,
+      "waitTimeoutMs": 5000,
+      "retry": 3,
+      "fallbacks": [],
+      "errorMessage": "Failed to click the checkout button after multiple retries.",
+      "stepDescription": "Click on the checkout button"
+    },
+    {
+      "action": "waitForTimeout",
+      "value": "3000",
+      "waitTimeoutMs": 3000,
+      "retry": 0,
+      "fallbacks": [],
+      "errorMessage": "Wait timed out after 3 seconds.",
+      "stepDescription": "Wait for 3 seconds after clicking checkout"
+    },
+    {
+      "action": "evaluate",
+      "selector": "document",
+      "value": "document.readyState === 'complete'",
+      "waitTimeoutMs": 30000,
+      "retry": 3,
+      "fallbacks": [],
+      "errorMessage": "Page did not fully load within the specified timeout.",
+      "stepDescription": "Wait for document to be fully loaded before entering first name"
+    },
+    {
+      "action": "fill",
+      "selector": "//input[@id='first-name']",
+      "value": "chaitanya",
+      "waitTimeoutMs": 5000,
+      "retry": 2,
+      "fallbacks": [],
+      "errorMessage": "Failed to enter the first name after multiple retries.",
+      "stepDescription": "Enter the first name."
+    },
+    {
+      "action": "evaluate",
+      "selector": "document",
+      "value": "document.readyState === 'complete'",
+      "waitTimeoutMs": 30000,
+      "retry": 3,
+      "fallbacks": [],
+      "errorMessage": "Page did not fully load within the specified timeout.",
+      "stepDescription": "Wait for document to be fully loaded before entering last name"
+    },
+    {
+      "action": "fill",
+      "selector": "//input[@id='last-name']",
+      "value": "Kompella",
+      "waitTimeoutMs": 5000,
+      "retry": 2,
+      "fallbacks": [],
+      "errorMessage": "Failed to enter the last name after multiple retries.",
+      "stepDescription": "Enter the last name."
+    },
+    {
+      "action": "evaluate",
+      "selector": "document",
+      "value": "document.readyState === 'complete'",
+      "waitTimeoutMs": 30000,
+      "retry": 3,
+      "fallbacks": [],
+      "errorMessage": "Page did not fully load within the specified timeout.",
+      "stepDescription": "Wait for document to be fully loaded before entering postal code"
+    },
+    {
+      "action": "fill",
+      "selector": "//input[@id='postal-code']",
+      "value": "62567352",
+      "waitTimeoutMs": 5000,
+      "retry": 2,
+      "fallbacks": [],
+      "errorMessage": "Failed to enter the postal code after multiple retries.",
+      "stepDescription": "Enter the postal code."
+    },
+    {
+      "action": "evaluate",
+      "selector": "document",
+      "value": "document.readyState === 'complete'",
+      "waitTimeoutMs": 30000,
+      "retry": 3,
+      "fallbacks": [],
+      "errorMessage": "Page did not fully load within the specified timeout.",
+      "stepDescription": "Wait for document to be fully loaded before clicking continue"
+    },
+    {
+      "action": "click",
+      "selector": "//input[@id='continue']",
+      "value": null,
+      "waitTimeoutMs": 5000,
+      "retry": 3,
+      "fallbacks": [],
+      "errorMessage": "Failed to click the continue button after multiple retries.",
+      "stepDescription": "Click on continue button"
+    },
+    {
+      "action": "waitForTimeout",
+      "value": "3000",
+      "waitTimeoutMs": 3000,
+      "retry": 0,
+      "fallbacks": [],
+      "errorMessage": "Wait timed out after 3 seconds.",
+      "stepDescription": "Wait for 3 seconds after clicking continue"
+    },
+    {
+      "action": "evaluate",
+      "selector": "document",
+      "value": "document.readyState === 'complete'",
+      "waitTimeoutMs": 30000,
+      "retry": 3,
+      "fallbacks": [],
+      "errorMessage": "Page did not fully load within the specified timeout.",
+      "stepDescription": "Wait for document to be fully loaded before clicking finish"
+    },
+    {
+      "action": "click",
+      "selector": "//button[@id='finish']",
+      "value": null,
+      "waitTimeoutMs": 5000,
+      "retry": 3,
+      "fallbacks": [],
+      "errorMessage": "Failed to click the finish button after multiple retries.",
+      "stepDescription": "Click on finish button"
+    },
+    {
+      "action": "waitForTimeout",
+      "value": "3000",
+      "waitTimeoutMs": 3000,
+      "retry": 0,
+      "fallbacks": [],
+      "errorMessage": "Wait timed out after 3 seconds.",
+      "stepDescription": "Wait for 3 seconds after clicking finish"
+    },
+    {
+      "action": "evaluate",
+      "selector": "document",
+      "value": "document.readyState === 'complete'",
+      "waitTimeoutMs": 30000,
+      "retry": 3,
+      "fallbacks": [],
+      "errorMessage": "Page did not fully load within the specified timeout.",
+      "stepDescription": "Wait for document to be fully loaded before checking thank you message"
+    },
+    {
+      "action": "isVisible",
+      "selector": "//h2[text()='Thank you for your order!']",
+      "value": null,
+      "waitTimeoutMs": 5000,
+      "retry": 3,
+      "fallbacks": [],
+      "errorMessage": "Failed to verify the 'Thank you for your order!' message after multiple retries.",
+      "stepDescription": "You should see a message “Thank you for your order!”"
+    },
+    {
+      "action": "waitForTimeout",
+      "value": "3000",
+      "waitTimeoutMs": 3000,
+      "retry": 0,
+      "fallbacks": [],
+      "errorMessage": "Wait timed out after 3 seconds.",
+      "stepDescription": "Wait for 3 seconds after checking thank you message"
+    },
+    {
+      "action": "evaluate",
+      "selector": "document",
+      "value": "document.readyState === 'complete'",
+      "waitTimeoutMs": 30000,
+      "retry": 3,
+      "fallbacks": [],
+      "errorMessage": "Page did not fully load within the specified timeout.",
+      "stepDescription": "Wait for document to be fully loaded before clicking back to home"
+    },
+    {
+      "action": "click",
+      "selector": "//button[@id='back-to-products']",
+      "value": null,
+      "waitTimeoutMs": 5000,
+      "retry": 3,
+      "fallbacks": [],
+      "errorMessage": "Failed to click the back to home button after multiple retries.",
+      "stepDescription": "Click on back to home button"
+    },
+    {
+      "action": "waitForTimeout",
+      "value": "3000",
+      "waitTimeoutMs": 3000,
+      "retry": 0,
+      "fallbacks": [],
+      "errorMessage": "Wait timed out after 3 seconds.",
+      "stepDescription": "Wait for 3 seconds after clicking back to home"
+    },
+    {
+      "action": "evaluate",
+      "selector": "document",
+      "value": "document.readyState === 'complete'",
+      "waitTimeoutMs": 30000,
+      "retry": 3,
+      "fallbacks": [],
+      "errorMessage": "Page did not fully load within the specified timeout.",
+      "stepDescription": "Wait for document to be fully loaded before clicking burger bar"
+    },
+    {
+      "action": "click",
+      "selector": "//button[@id='react-burger-menu-btn']",
+      "value": null,
+      "waitTimeoutMs": 5000,
+      "retry": 3,
+      "fallbacks": [],
+      "errorMessage": "Failed to click the burger bar after multiple retries.",
+      "stepDescription": "Click to burger bar"
+    },
+    {
+      "action": "waitForTimeout",
+      "value": "3000",
+      "waitTimeoutMs": 3000,
+      "retry": 0,
+      "fallbacks": [],
+      "errorMessage": "Wait timed out after 3 seconds.",
+      "stepDescription": "Wait for 3 seconds after clicking burger bar"
+    },
+    {
+      "action": "evaluate",
+      "selector": "document",
+      "value": "document.readyState === 'complete'",
+      "waitTimeoutMs": 30000,
+      "retry": 3,
+      "fallbacks": [],
+      "errorMessage": "Page did not fully load within the specified timeout.",
+      "stepDescription": "Wait for document to be fully loaded before clicking logout"
+    },
+    {
+      "action": "click",
+      "selector": "//a[@id='logout_sidebar_link']",
+      "value": null,
+      "waitTimeoutMs": 5000,
+      "retry": 3,
+      "fallbacks": [],
+      "errorMessage": "Failed to click the logout button after multiple retries.",
+      "stepDescription": "Click on logout"
+    }
+  ];
+
+  const executedSteps: string[] = [];
+  const executionResults: any[] = [];
+  let totalDuration = 0;
+  let browser: Browser | undefined = undefined;
+  let page: Page | undefined = undefined;
+  let context: BrowserContext | undefined = undefined;
+
+  try {
+    browser = await chromium.launch({
       headless: false,
-      slowMo: 50,
+      slowMo: 1000,
       args: [
         '--no-sandbox',
         '--disable-setuid-sandbox',
@@ -15,474 +527,107 @@ test.describe("SauceDemo End-to-End Test", () => {
         '--disable-features=VizDisplayCompositor'
       ]
     });
-    const context = await browser.newContext({ viewport: { width: 1280, height: 720 } });
-    const page: Page = await context.newPage();
-    let step = 0;
+    context = await browser.newContext({ viewport: { width: 1280, height: 720 } });
+    page = await context.newPage();
+    page.setDefaultTimeout(30000);
 
-    // Step 1: Navigate to https://www.saucedemo.com/
-    step++;
-    try {
-      await page.goto("https://www.saucedemo.com/", { timeout: 10000 });
-      console.log(`Step ${step} Result:`);
-      console.log(`Action: goto`);
-      console.log(`Status: success`);
-      console.log(`Details: Navigated to https://www.saucedemo.com/`);
-      await page.waitForTimeout(100);
-    } catch (error: any) {
-      console.log(`Step ${step} Result:`);
-      console.log(`Action: goto`);
-      console.log(`Status: error`);
-      console.log(`Details: Navigation to homepage failed. ${error.message}`);
+    for (const step of steps) {
+      const startTime = performance.now();
+      let status = 'success';
+      let details = '';
+
+      try {
+        switch (step.action) {
+          case 'goto':
+            await page.goto(step.selector, { waitUntil: 'domcontentloaded', timeout: step.waitTimeoutMs });
+            details = `Navigated to ${step.selector}`;
+            break;
+          case 'click':
+            await page.locator(step.selector).click({ timeout: step.waitTimeoutMs });
+            details = `Clicked ${step.selector}`;
+            break;
+          case 'fill':
+            await page.locator(step.selector).fill(step.value, { timeout: step.waitTimeoutMs });
+            details = `Filled ${step.selector} with ${step.value}`;
+            break;
+          case 'check':
+            await page.locator(step.selector).check({ timeout: step.waitTimeoutMs });
+            details = `Checked ${step.selector}`;
+            break;
+          case 'uncheck':
+            await page.locator(step.selector).uncheck({ timeout: step.waitTimeoutMs });
+            details = `Unchecked ${step.selector}`;
+            break;
+          case 'hover':
+            await page.locator(step.selector).hover({ timeout: step.waitTimeoutMs });
+            details = `Hovered ${step.selector}`;
+            break;
+          case 'waitForTimeout':
+            await page.waitForTimeout(parseInt(step.value, 10));
+            details = `Waited for ${step.value}ms`;
+            break;
+          case 'isVisible':
+            const isVisible = await page.locator(step.selector).isVisible({ timeout: step.waitTimeoutMs });
+            details = `Element ${step.selector} is ${isVisible ? 'visible' : 'not visible'}`;
+            if (!isVisible) {
+              throw new Error(`Element ${step.selector} is not visible`);
+            }
+            break;
+          case 'evaluate':
+            await page.evaluate(step.value);
+            details = `Evaluated ${step.value}`;
+            break;
+          default:
+            throw new Error(`Unknown action: ${step.action}`);
+        }
+      } catch (error: any) {
+        status = 'error';
+        details = error.message || `Failed to execute action: ${step.action}`;
+      }
+
+      const endTime = performance.now();
+      const durationMs = endTime - startTime;
+      totalDuration += durationMs;
+
+      executedSteps.push(step.stepDescription);
+      executionResults.push({
+        step: step.stepDescription,
+        status: status,
+        details: details,
+        timestamp: new Date().toISOString(),
+        duration_ms: durationMs
+      });
     }
-
-    // Step 2: Enter username 'standard_user'.
-    step++;
-    try {
-      await page.locator("[data-test='username']").fill("standard_user", { timeout: 5000 });
-      console.log(`Step ${step} Result:`);
-      console.log(`Action: fill`);
-      console.log(`Status: success`);
-      console.log(`Details: Filled [data-test='username']`);
-      await page.waitForTimeout(100);
-    } catch (error: any) {
-      console.log(`Step ${step} Result:`);
-      console.log(`Action: fill`);
-      console.log(`Status: error`);
-      console.log(`Details: Failed to enter username. ${error.message}`);
+  } catch (error: any) {
+    const stepDescription = "Browser setup and test execution";
+    executedSteps.push(stepDescription);
+    executionResults.push({
+      step: stepDescription,
+      status: 'error',
+      details: error.message || `Failed to setup browser or execute test`,
+      timestamp: new Date().toISOString(),
+      duration_ms: 0
+    });
+  } finally {
+    if (browser) {
+      try {
+        await context?.close();
+        await browser?.close();
+      } catch (e) {
+        console.error("Error closing browser:", e);
+      }
     }
+  }
 
-    // Step 3: Enter password 'secret_sauce'.
-    step++;
-    try {
-      await page.locator("[data-test='password']").fill("secret_sauce", { timeout: 5000 });
-      console.log(`Step ${step} Result:`);
-      console.log(`Action: fill`);
-      console.log(`Status: success`);
-      console.log(`Details: Filled [data-test='password']`);
-      await page.waitForTimeout(100);
-    } catch (error: any) {
-      console.log(`Step ${step} Result:`);
-      console.log(`Action: fill`);
-      console.log(`Status: error`);
-      console.log(`Details: Failed to enter password. ${error.message}`);
+  return {
+    user_test_steps: originalUserSteps,
+    executed_test_steps: executedSteps,
+    execution_results: executionResults,
+    summary: {
+      total_steps: executionResults.length,
+      passed: executionResults.filter(r => r.status === 'success').length,
+      failed: executionResults.filter(r => r.status === 'error').length,
+      duration_ms: totalDuration
     }
-
-    // Step 4: Click the login button.
-    step++;
-    try {
-      await page.locator("[data-test='login-button']").click({ timeout: 5000 });
-      console.log(`Step ${step} Result:`);
-      console.log(`Action: click`);
-      console.log(`Status: success`);
-      console.log(`Details: Clicked [data-test='login-button']`);
-      await page.waitForTimeout(2000);
-    } catch (error: any) {
-      console.log(`Step ${step} Result:`);
-      console.log(`Action: click`);
-      console.log(`Status: error`);
-      console.log(`Details: Failed to click login button. ${error.message}`);
-    }
-
-    // Step 5: Wait for page load after login.
-    step++;
-    try {
-      await page.waitForTimeout(2000);
-      console.log(`Step ${step} Result:`);
-      console.log(`Action: waitFor`);
-      console.log(`Status: success`);
-      console.log(`Details: Waited for 2000ms`);
-      await page.waitForTimeout(100);
-    } catch (error: any) {
-      console.log(`Step ${step} Result:`);
-      console.log(`Action: waitFor`);
-      console.log(`Status: error`);
-      console.log(`Details: Wait after login failed. ${error.message}`);
-    }
-
-    // Step 6: Open the sort dropdown.
-    step++;
-    try {
-      await page.locator("[data-test='product_sort_container']").click({ timeout: 5000 });
-      console.log(`Step ${step} Result:`);
-      console.log(`Action: click`);
-      console.log(`Status: success`);
-      console.log(`Details: Clicked [data-test='product_sort_container']`);
-      await page.waitForTimeout(500);
-    } catch (error: any) {
-      console.log(`Step ${step} Result:`);
-      console.log(`Action: click`);
-      console.log(`Status: error`);
-      console.log(`Details: Failed to open sort dropdown. ${error.message}`);
-    }
-
-    // Step 7: Select 'Name (Z to A)' sort option.
-    step++;
-    try {
-      await page.locator("[data-test='product_sort_container'] [value='za']").click({ timeout: 5000 });
-      console.log(`Step ${step} Result:`);
-      console.log(`Action: click`);
-      console.log(`Status: success`);
-      console.log(`Details: Clicked [data-test='product_sort_container'] [value='za']`);
-      await page.waitForTimeout(2000);
-    } catch (error: any) {
-      console.log(`Step ${step} Result:`);
-      console.log(`Action: click`);
-      console.log(`Status: error`);
-      console.log(`Details: Failed to select sort option. ${error.message}`);
-    }
-
-    // Step 8: Wait for sorting to complete.
-    step++;
-    try {
-      await page.waitForTimeout(2000);
-      console.log(`Step ${step} Result:`);
-      console.log(`Action: waitFor`);
-      console.log(`Status: success`);
-      console.log(`Details: Waited for 2000ms`);
-      await page.waitForTimeout(100);
-    } catch (error: any) {
-      console.log(`Step ${step} Result:`);
-      console.log(`Action: waitFor`);
-      console.log(`Status: error`);
-      console.log(`Details: Wait after sorting failed. ${error.message}`);
-    }
-
-    // Step 9: Add 'Sauce Labs Backpack' to cart.
-    step++;
-    try {
-      await page.locator(".inventory_item:has-text('Sauce Labs Backpack') [data-test^='add-to-cart-']").click({ timeout: 5000 });
-      console.log(`Step ${step} Result:`);
-      console.log(`Action: click`);
-      console.log(`Status: success`);
-      console.log(`Details: Clicked .inventory_item:has-text('Sauce Labs Backpack') [data-test^='add-to-cart-']`);
-      await page.waitForTimeout(500);
-    } catch (error: any) {
-      console.log(`Step ${step} Result:`);
-      console.log(`Action: click`);
-      console.log(`Status: error`);
-      console.log(`Details: Failed to add backpack to cart. ${error.message}`);
-    }
-
-    // Step 10: Click the cart icon.
-    step++;
-    try {
-      await page.locator(".shopping_cart_link, #shopping_cart_container").click({ timeout: 5000 });
-      console.log(`Step ${step} Result:`);
-      console.log(`Action: click`);
-      console.log(`Status: success`);
-      console.log(`Details: Clicked .shopping_cart_link, #shopping_cart_container`);
-      await page.waitForTimeout(1000);
-    } catch (error: any) {
-      console.log(`Step ${step} Result:`);
-      console.log(`Action: click`);
-      console.log(`Status: error`);
-      console.log(`Details: Failed to click cart icon. ${error.message}`);
-    }
-
-    // Step 11: Wait for cart update.
-    step++;
-    try {
-      await page.waitForTimeout(1000);
-      console.log(`Step ${step} Result:`);
-      console.log(`Action: waitFor`);
-      console.log(`Status: success`);
-      console.log(`Details: Waited for 1000ms`);
-      await page.waitForTimeout(100);
-    } catch (error: any) {
-      console.log(`Step ${step} Result:`);
-      console.log(`Action: waitFor`);
-      console.log(`Status: error`);
-      console.log(`Details: Wait after clicking cart failed. ${error.message}`);
-    }
-
-    // Step 12: Verify 'Sauce Labs Backpack' is in the cart.
-    step++;
-    try {
-      const isVisible = await page.locator(".cart_item:has-text('Sauce Labs Backpack')").isVisible({ timeout: 5000 });
-      console.log(`Step ${step} Result:`);
-      console.log(`Action: isVisible`);
-      console.log(`Status: success`);
-      console.log(`Details: Element .cart_item:has-text('Sauce Labs Backpack') is ${isVisible ? 'visible' : 'not visible'}`);
-      await page.waitForTimeout(100);
-    } catch (error: any) {
-      console.log(`Step ${step} Result:`);
-      console.log(`Action: isVisible`);
-      console.log(`Status: error`);
-      console.log(`Details: 'Sauce Labs Backpack' not found in cart. ${error.message}`);
-    }
-
-    // Step 13: Wait before checkout.
-    step++;
-    try {
-      await page.waitForTimeout(1000);
-      console.log(`Step ${step} Result:`);
-      console.log(`Action: waitFor`);
-      console.log(`Status: success`);
-      console.log(`Details: Waited for 1000ms`);
-      await page.waitForTimeout(100);
-    } catch (error: any) {
-      console.log(`Step ${step} Result:`);
-      console.log(`Action: waitFor`);
-      console.log(`Status: error`);
-      console.log(`Details: Wait before checkout failed. ${error.message}`);
-    }
-
-    // Step 14: Click the checkout button.
-    step++;
-    try {
-      await page.locator("[data-test='checkout']").click({ timeout: 5000 });
-      console.log(`Step ${step} Result:`);
-      console.log(`Action: click`);
-      console.log(`Status: success`);
-      console.log(`Details: Clicked [data-test='checkout']`);
-      await page.waitForTimeout(1000);
-    } catch (error: any) {
-      console.log(`Step ${step} Result:`);
-      console.log(`Action: click`);
-      console.log(`Status: error`);
-      console.log(`Details: Failed to click checkout button. ${error.message}`);
-    }
-
-    // Step 15: Wait after clicking checkout.
-    step++;
-    try {
-      await page.waitForTimeout(1000);
-      console.log(`Step ${step} Result:`);
-      console.log(`Action: waitFor`);
-      console.log(`Status: success`);
-      console.log(`Details: Waited for 1000ms`);
-      await page.waitForTimeout(100);
-    } catch (error: any) {
-      console.log(`Step ${step} Result:`);
-      console.log(`Action: waitFor`);
-      console.log(`Status: error`);
-      console.log(`Details: Wait after clicking checkout failed. ${error.message}`);
-    }
-
-    // Step 16: Enter first name 'chaitanya'.
-    step++;
-    try {
-      await page.locator("[data-test='firstName'], #first-name").fill("chaitanya", { timeout: 5000 });
-      console.log(`Step ${step} Result:`);
-      console.log(`Action: fill`);
-      console.log(`Status: success`);
-      console.log(`Details: Filled [data-test='firstName'], #first-name`);
-      await page.waitForTimeout(100);
-    } catch (error: any) {
-      console.log(`Step ${step} Result:`);
-      console.log(`Action: fill`);
-      console.log(`Status: error`);
-      console.log(`Details: Failed to enter first name. ${error.message}`);
-    }
-
-    // Step 17: Enter last name 'Kompella'.
-    step++;
-    try {
-      await page.locator("[data-test='lastName'], #last-name").fill("Kompella", { timeout: 5000 });
-      console.log(`Step ${step} Result:`);
-      console.log(`Action: fill`);
-      console.log(`Status: success`);
-      console.log(`Details: Filled [data-test='lastName'], #last-name`);
-      await page.waitForTimeout(100);
-    } catch (error: any) {
-      console.log(`Step ${step} Result:`);
-      console.log(`Action: fill`);
-      console.log(`Status: error`);
-      console.log(`Details: Failed to enter last name. ${error.message}`);
-    }
-
-    // Step 18: Enter postal code '62567352'.
-    step++;
-    try {
-      await page.locator("[data-test='postalCode'], #postal-code").fill("62567352", { timeout: 5000 });
-      console.log(`Step ${step} Result:`);
-      console.log(`Action: fill`);
-      console.log(`Status: success`);
-      console.log(`Details: Filled [data-test='postalCode'], #postal-code`);
-      await page.waitForTimeout(100);
-    } catch (error: any) {
-      console.log(`Step ${step} Result:`);
-      console.log(`Action: fill`);
-      console.log(`Status: error`);
-      console.log(`Details: Failed to enter postal code. ${error.message}`);
-    }
-
-    // Step 19: Wait before continue.
-    step++;
-    try {
-      await page.waitForTimeout(1000);
-      console.log(`Step ${step} Result:`);
-      console.log(`Action: waitFor`);
-      console.log(`Status: success`);
-      console.log(`Details: Waited for 1000ms`);
-      await page.waitForTimeout(100);
-    } catch (error: any) {
-      console.log(`Step ${step} Result:`);
-      console.log(`Action: waitFor`);
-      console.log(`Status: error`);
-      console.log(`Details: Wait before continue failed. ${error.message}`);
-    }
-
-    // Step 20: Click the continue button.
-    step++;
-    try {
-      await page.locator("[data-test='continue']").click({ timeout: 5000 });
-      console.log(`Step ${step} Result:`);
-      console.log(`Action: click`);
-      console.log(`Status: success`);
-      console.log(`Details: Clicked [data-test='continue']`);
-      await page.waitForTimeout(1000);
-    } catch (error: any) {
-      console.log(`Step ${step} Result:`);
-      console.log(`Action: click`);
-      console.log(`Status: error`);
-      console.log(`Details: Failed to click continue button. ${error.message}`);
-    }
-
-    // Step 21: Wait after clicking continue.
-    step++;
-    try {
-      await page.waitForTimeout(1000);
-      console.log(`Step ${step} Result:`);
-      console.log(`Action: waitFor`);
-      console.log(`Status: success`);
-      console.log(`Details: Waited for 1000ms`);
-      await page.waitForTimeout(100);
-    } catch (error: any) {
-      console.log(`Step ${step} Result:`);
-      console.log(`Action: waitFor`);
-      console.log(`Status: error`);
-      console.log(`Details: Wait after clicking continue failed. ${error.message}`);
-    }
-
-    // Step 22: Click the finish button.
-    step++;
-    try {
-      await page.locator("[data-test='finish']").click({ timeout: 5000 });
-      console.log(`Step ${step} Result:`);
-      console.log(`Action: click`);
-      console.log(`Status: success`);
-      console.log(`Details: Clicked [data-test='finish']`);
-      await page.waitForTimeout(1000);
-    } catch (error: any) {
-      console.log(`Step ${step} Result:`);
-      console.log(`Action: click`);
-      console.log(`Status: error`);
-      console.log(`Details: Failed to click finish button. ${error.message}`);
-    }
-
-    // Step 23: Verify order confirmation message.
-    step++;
-    try {
-      const isVisible = await page.locator(".complete-header:has-text('Thank you for your order!')").isVisible({ timeout: 5000 });
-      console.log(`Step ${step} Result:`);
-      console.log(`Action: isVisible`);
-      console.log(`Status: success`);
-      console.log(`Details: Element .complete-header:has-text('Thank you for your order!') is ${isVisible ? 'visible' : 'not visible'}`);
-      await page.waitForTimeout(100);
-    } catch (error: any) {
-      console.log(`Step ${step} Result:`);
-      console.log(`Action: isVisible`);
-      console.log(`Status: error`);
-      console.log(`Details: Order confirmation message not found. ${error.message}`);
-    }
-
-    // Step 24: Wait after order confirmation.
-    step++;
-    try {
-      await page.waitForTimeout(1000);
-      console.log(`Step ${step} Result:`);
-      console.log(`Action: waitFor`);
-      console.log(`Status: success`);
-      console.log(`Details: Waited for 1000ms`);
-      await page.waitForTimeout(100);
-    } catch (error: any) {
-      console.log(`Step ${step} Result:`);
-      console.log(`Action: waitFor`);
-      console.log(`Status: error`);
-      console.log(`Details: Wait after order confirmation failed. ${error.message}`);
-    }
-
-    // Step 25: Click the back to products button.
-    step++;
-    try {
-      await page.locator("[data-test='back-to-products']").click({ timeout: 5000 });
-      console.log(`Step ${step} Result:`);
-      console.log(`Action: click`);
-      console.log(`Status: success`);
-      console.log(`Details: Clicked [data-test='back-to-products']`);
-      await page.waitForTimeout(1000);
-    } catch (error: any) {
-      console.log(`Step ${step} Result:`);
-      console.log(`Action: click`);
-      console.log(`Status: error`);
-      console.log(`Details: Failed to click back to products button. ${error.message}`);
-    }
-
-    // Step 26: Wait after clicking back to products.
-    step++;
-    try {
-      await page.waitForTimeout(1000);
-      console.log(`Step ${step} Result:`);
-      console.log(`Action: waitFor`);
-      console.log(`Status: success`);
-      console.log(`Details: Waited for 1000ms`);
-      await page.waitForTimeout(100);
-    } catch (error: any) {
-      console.log(`Step ${step} Result:`);
-      console.log(`Action: waitFor`);
-      console.log(`Status: error`);
-      console.log(`Details: Wait after clicking back to products failed. ${error.message}`);
-    }
-
-    // Step 27: Click the burger menu button.
-    step++;
-    try {
-      await page.locator("#react-burger-menu-btn").click({ timeout: 5000 });
-      console.log(`Step ${step} Result:`);
-      console.log(`Action: click`);
-      console.log(`Status: success`);
-      console.log(`Details: Clicked #react-burger-menu-btn`);
-      await page.waitForTimeout(1000);
-    } catch (error: any) {
-      console.log(`Step ${step} Result:`);
-      console.log(`Action: click`);
-      console.log(`Status: error`);
-      console.log(`Details: Failed to click burger menu button. ${error.message}`);
-    }
-
-    // Step 28: Wait after clicking burger menu.
-    step++;
-    try {
-      await page.waitForTimeout(1000);
-      console.log(`Step ${step} Result:`);
-      console.log(`Action: waitFor`);
-      console.log(`Status: success`);
-      console.log(`Details: Waited for 1000ms`);
-      await page.waitForTimeout(100);
-    } catch (error: any) {
-      console.log(`Step ${step} Result:`);
-      console.log(`Action: waitFor`);
-      console.log(`Status: error`);
-      console.log(`Details: Wait after clicking burger menu failed. ${error.message}`);
-    }
-
-    // Step 29: Click the logout button.
-    step++;
-    try {
-      await page.locator("#logout_sidebar_link").click({ timeout: 5000 });
-      console.log(`Step ${step} Result:`);
-      console.log(`Action: click`);
-      console.log(`Status: success`);
-      console.log(`Details: Clicked #logout_sidebar_link`);
-      await page.waitForTimeout(1000);
-    } catch (error: any) {
-      console.log(`Step ${step} Result:`);
-      console.log(`Action: click`);
-      console.log(`Status: error`);
-      console.log(`Details: Failed to click logout button. ${error.message}`);
-    }
-
-    await browser.close();
-  });
+  };
 });
