@@ -1,7 +1,7 @@
 import { test, expect, chromium, Browser, Page, BrowserContext } from "@playwright/test";
 
 test('Generated Test', async () => {
-  test.setTimeout(120000);
+  test.setTimeout(12000);
 
   const originalUserSteps = [
     "Navigate to https://demowebshop.tricentis.com",
