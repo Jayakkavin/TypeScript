@@ -1,234 +1,397 @@
 import { test, expect, chromium, Browser, Page, BrowserContext } from "@playwright/test";
 
-test.setTimeout(12000);
+test.setTimeout(12000); // Extend timeout to 2 minutes
 
-test('Generated Test', async () => {
-  const userTestSteps: string[] = [
-    "Navigate to https://demowebshop.tricentis.com",
-    "Click on Log in link in the header",
-    "Enter snaptest@yopmail.com in the Email field",
-    "Enter snaptest@123 in the Password field",
-    "Click on Log in button",
-    "Verify that snaptest@yopmail.com is displayed in the header",
-    "Click on Books in the top menu",
-    "Click on the first product link on the page",
-    "Click on Add to cart button",
-    "Wait for the add to cart success message",
-    "Click on Shopping cart link in the header",
-    "Verify that the product is present in the shopping cart",
-    "Check the Terms of service checkbox",
-    "Click on Checkout button",
-    "Click Continue button in the billing address section",
-    "Verify that the shipping address section is displayed",
-    "Click Continue button in the shipping address section",
-    "Verify that the Shipping method section is displayed",
-    "Click Continue button in the Shipping method section",
-    "Verify that Cash On Delivery is selected by default",
-    "Click Continue button in the Payment method section",
-    "Verify that the Payment information section is displayed",
-    "Click Continue button in the Payment information section",
-    "Click Confirm button on the confirm order section",
-    "Verify that the order number is shown on the order confirmation page"
-  ];
+test("Generated Playwright Test", async () => {
+  const testData = {
+    "steps": [
+      {
+        "action": "goto",
+        "selector": null,
+        "value": "https://demowebshop.tricentis.com",
+        "waitTimeoutMs": 10000,
+        "retry": 3,
+        "fallbacks": ["waitForLoadState"],
+        "errorMessage": "Failed to navigate to demowebshop",
+        "stepDescription": "Navigate to the demo webshop homepage"
+      },
+      {
+        "action": "click",
+        "selector": "a.ico-login",
+        "value": null,
+        "waitTimeoutMs": 10000,
+        "retry": 3,
+        "fallbacks": ["scrollIntoView"],
+        "errorMessage": "Failed to click on the login link",
+        "stepDescription": "Click on Log in link in the header"
+      },
+      {
+        "action": "fill",
+        "selector": "#Email",
+        "value": "snaptest@yopmail.com",
+        "waitTimeoutMs": 10000,
+        "retry": 3,
+        "fallbacks": [],
+        "errorMessage": "Failed to enter email",
+        "stepDescription": "Enter snaptest@yopmail.com in the Email field"
+      },
+      {
+        "action": "fill",
+        "selector": "#Password",
+        "value": "snaptest@123",
+        "waitTimeoutMs": 10000,
+        "retry": 3,
+        "fallbacks": [],
+        "errorMessage": "Failed to enter password",
+        "stepDescription": "Enter snaptest@123 in the Password field"
+      },
+      {
+        "action": "click",
+        "selector": "input.button-1.login-button",
+        "value": null,
+        "waitTimeoutMs": 10000,
+        "retry": 3,
+        "fallbacks": [],
+        "errorMessage": "Failed to click login button",
+        "stepDescription": "Click on Log in button"
+      },
+      {
+        "action": "isVisible",
+        "selector": "a.account",
+        "value": "snaptest@yopmail.com",
+        "waitTimeoutMs": 10000,
+        "retry": 3,
+        "fallbacks": ["scrollIntoView"],
+        "errorMessage": "Logged in email not visible",
+        "stepDescription": "Verify that snaptest@yopmail.com is displayed in the header"
+      },
+      {
+        "action": "click",
+        "selector": "ul.top-menu > li > a[href='/books']",
+        "value": null,
+        "waitTimeoutMs": 10000,
+        "retry": 3,
+        "fallbacks": [],
+        "errorMessage": "Failed to click on Books menu",
+        "stepDescription": "Click on Books in the top menu"
+      },
+      {
+        "action": "click",
+        "selector": "div.item-box a[href*='/']",
+        "value": null,
+        "waitTimeoutMs": 10000,
+        "retry": 3,
+        "fallbacks": [],
+        "errorMessage": "Failed to click on the first product link",
+        "stepDescription": "Click on the first product link on the page"
+      },
+      {
+        "action": "click",
+        "selector": "input.button-1.add-to-cart-button",
+        "value": null,
+        "waitTimeoutMs": 10000,
+        "retry": 3,
+        "fallbacks": [],
+        "errorMessage": "Failed to click on Add to cart button",
+        "stepDescription": "Click on Add to cart button"
+      },
+      {
+        "action": "click",
+        "selector": "#topcartlink a.ico-cart",
+        "value": null,
+        "waitTimeoutMs": 10000,
+        "retry": 3,
+        "fallbacks": ["scrollIntoView"],
+        "errorMessage": "Failed to click on Shopping cart link",
+        "stepDescription": "Click on Shopping cart link in the header"
+      },
+      {
+        "action": "isVisible",
+        "selector": "div.cart-item-row",
+        "value": null,
+        "waitTimeoutMs": 10000,
+        "retry": 3,
+        "fallbacks": [],
+        "errorMessage": "Product not present in the shopping cart",
+        "stepDescription": "Verify that the product is present in the shopping cart"
+      },
+      {
+        "action": "check",
+        "selector": "#termsofservice",
+        "value": null,
+        "waitTimeoutMs": 10000,
+        "retry": 3,
+        "fallbacks": ["scrollIntoView"],
+        "errorMessage": "Failed to check the terms of service checkbox",
+        "stepDescription": "Click the Terms of service checkbox"
+      },
+      {
+        "action": "click",
+        "selector": "#checkout",
+        "value": null,
+        "waitTimeoutMs": 10000,
+        "retry": 3,
+        "fallbacks": ["scrollIntoView"],
+        "errorMessage": "Failed to click on the checkout button",
+        "stepDescription": "Click on Checkout button"
+      },
+      {
+        "action": "click",
+        "selector": "div#billing-buttons-container input.button-1",
+        "value": null,
+        "waitTimeoutMs": 10000,
+        "retry": 3,
+        "fallbacks": [],
+        "errorMessage": "Failed to click continue on billing address",
+        "stepDescription": "Click on Continue button in the billing address section"
+      },
+      {
+        "action": "isVisible",
+        "selector": "#shipping-address-block",
+        "value": null,
+        "waitTimeoutMs": 10000,
+        "retry": 3,
+        "fallbacks": [],
+        "errorMessage": "Shipping address section is not displayed",
+        "stepDescription": "Verify that the shipping address section is displayed"
+      },
+      {
+        "action": "click",
+        "selector": "div#shipping-buttons-container input.button-1",
+        "value": null,
+        "waitTimeoutMs": 10000,
+        "retry": 3,
+        "fallbacks": [],
+        "errorMessage": "Failed to click continue on shipping address",
+        "stepDescription": "Click on Continue button in the shipping address section"
+      },
+      {
+        "action": "isVisible",
+        "selector": "#shipping-method-block",
+        "value": null,
+        "waitTimeoutMs": 10000,
+        "retry": 3,
+        "fallbacks": [],
+        "errorMessage": "Shipping method section is not displayed",
+        "stepDescription": "Verify that the Shipping method section is displayed"
+      },
+      {
+        "action": "click",
+        "selector": "div#shipping-method-buttons-container input.button-1",
+        "value": null,
+        "waitTimeoutMs": 10000,
+        "retry": 3,
+        "fallbacks": [],
+        "errorMessage": "Failed to click continue on shipping method",
+        "stepDescription": "Click on Continue button in the Shipping method section"
+      },
+      {
+        "action": "isVisible",
+        "selector": "input#paymentmethod_0[checked='checked']",
+        "value": null,
+        "waitTimeoutMs": 10000,
+        "retry": 3,
+        "fallbacks": [],
+        "errorMessage": "Cash On Delivery is not selected by default",
+        "stepDescription": "Verify that Cash On Delivery is selected by default in the payment method section"
+      },
+      {
+        "action": "click",
+        "selector": "div#payment-method-buttons-container input.button-1",
+        "value": null,
+        "waitTimeoutMs": 10000,
+        "retry": 3,
+        "fallbacks": [],
+        "errorMessage": "Failed to click continue on payment method",
+        "stepDescription": "Click on Continue button in the Payment method section"
+      },
+      {
+        "action": "isVisible",
+        "selector": "div#payment-info-block",
+        "value": null,
+        "waitTimeoutMs": 10000,
+        "retry": 3,
+        "fallbacks": [],
+        "errorMessage": "Payment information section is not displayed",
+        "stepDescription": "Verify that the selected payment method is displayed in the Payment information section"
+      },
+      {
+        "action": "click",
+        "selector": "div#payment-info-buttons-container input.button-1",
+        "value": null,
+        "waitTimeoutMs": 10000,
+        "retry": 3,
+        "fallbacks": [],
+        "errorMessage": "Failed to click continue on payment info",
+        "stepDescription": "Click on Continue button in the Payment information section"
+      },
+      {
+        "action": "click",
+        "selector": "input.button-1.confirm-order-button",
+        "value": null,
+        "waitTimeoutMs": 10000,
+        "retry": 3,
+        "fallbacks": [],
+        "errorMessage": "Failed to click confirm on confirm order",
+        "stepDescription": "On the confirm order section, click on Confirm button"
+      },
+      {
+        "action": "isVisible",
+        "selector": "div.section.order-completed div.title strong",
+        "value": null,
+        "waitTimeoutMs": 10000,
+        "retry": 3,
+        "fallbacks": [],
+        "errorMessage": "Order number is not displayed",
+        "stepDescription": "Verify that the order number is shown on the order confirmation page"
+      }
+    ]
+  };
+
+  const userTestSteps: string[] = testData.steps.map(step => step.stepDescription);
   const executedSteps: string[] = [];
   const executionResults: any[] = [];
+  let passedCount = 0;
+  let failedCount = 0;
   let totalDuration = 0;
-  let passed = 0;
-  let failed = 0;
-  let failureOccurs = false;
 
-  const browser: Browser = await chromium.launch({
-    headless: false,
-    slowMo: 1000,
-    args: [
-      '--no-sandbox',
-      '--disable-setuid-sandbox',
-      '--disable-dev-shm-usage',
-      '--disable-web-security',
-      '--disable-features=VizDisplayCompositor'
-    ]
-  });
-  const context: BrowserContext = await browser.newContext({ viewport: { width: 1280, height: 720 } });
-  const page: Page = await context.newPage();
-  page.setDefaultTimeout(30000);
-
-  for (let i = 0; i < userTestSteps.length; i++) {
-    const step = `Step ${i + 1}`;
-    let status = 'success';
-    let details = '';
-    const startTime = performance.now();
-
-    try {
-      switch (i) {
-        case 0:
-          await page.goto("https://demowebshop.tricentis.com", { timeout: 30000, waitUntil: 'load' });
-          details = "Navigated to https://demowebshop.tricentis.com";
-          break;
-        case 1:
-          await page.locator("//a[text()='Log in']").click();
-          details = "Clicked //a[text()='Log in']";
-          break;
-        case 2:
-          await page.locator("#Email").fill("snaptest@yopmail.com");
-          details = "Filled #Email";
-          break;
-        case 3:
-          await page.locator("#Password").fill("snaptest@123");
-          details = "Filled #Password";
-          break;
-        case 4:
-          await page.locator("//input[@value='Log in']").click();
-          details = "Clicked //input[@value='Log in']";
-          break;
-        case 5:
-          await page.locator("//a[text()='snaptest@yopmail.com']").waitFor({ state: 'visible' });
-          details = "Waited for //a[text()='snaptest@yopmail.com']";
-          break;
-        case 6:
-          await page.locator("//a[text()='Books']").click();
-          details = "Clicked //a[text()='Books']";
-          break;
-        case 7:
-          await page.locator("//div[@class='item-box'][1]//a[@href and @title]").click();
-          details = "Clicked //div[@class='item-box'][1]//a[@href and @title]";
-          break;
-        case 8:
-          await page.locator("#add-to-cart-button-45").click();
-          details = "Clicked #add-to-cart-button-45";
-          break;
-        case 9:
-          await page.locator("//p[@class='content' and contains(text(),'The product has been added to your ')]").waitFor({ state: 'visible' });
-          details = "Waited for //p[@class='content' and contains(text(),'The product has been added to your ')]";
-          break;
-        case 10:
-          await page.locator("//span[@class='cart-label']").click();
-          details = "Clicked //span[@class='cart-label']";
-          break;
-        case 11:
-          await page.locator("//a[@class='product-name']").waitFor({ state: 'visible' });
-          details = "Waited for //a[@class='product-name']";
-          break;
-        case 12:
-          await page.locator("#termsofservice").check();
-          details = "Checked #termsofservice";
-          break;
-        case 13:
-          await page.locator("#checkout").click();
-          details = "Clicked #checkout";
-          break;
-        case 14:
-          await page.locator("//input[@title='Continue']").click();
-          details = "Clicked //input[@title='Continue']";
-          break;
-        case 15:
-          await page.locator("//div[@id='shipping-buttons-container']").waitFor({ state: 'visible' });
-          details = "Waited for //div[@id='shipping-buttons-container']";
-          break;
-        case 16:
-          await page.locator("//input[@onclick='Shipping.save()']").click();
-          details = "Clicked //input[@onclick='Shipping.save()']";
-          break;
-        case 17:
-          await page.locator("//div[@id='shipping-method-buttons-container']").waitFor({ state: 'visible' });
-          details = "Waited for //div[@id='shipping-method-buttons-container']";
-          break;
-        case 18:
-          await page.locator("//input[@onclick='ShippingMethod.save()']").click();
-          details = "Clicked //input[@onclick='ShippingMethod.save()']";
-          break;
-        case 19:
-          await page.locator("//li[@class='payment-method']/label[contains(text(),'Cash On Delivery')]").waitFor({ state: 'visible' });
-          details = "Waited for //li[@class='payment-method']/label[contains(text(),'Cash On Delivery')]";
-          break;
-        case 20:
-          await page.locator("//input[@onclick='PaymentMethod.save()']").click();
-          details = "Clicked //input[@onclick='PaymentMethod.save()']";
-          break;
-        case 21:
-          await page.locator("//div[@id='payment-info-buttons-container']").waitFor({ state: 'visible' });
-          details = "Waited for //div[@id='payment-info-buttons-container']";
-          break;
-        case 22:
-          await page.locator("//input[@onclick='PaymentInfo.save()']").click();
-          details = "Clicked //input[@onclick='PaymentInfo.save()']";
-          break;
-        case 23:
-          await page.locator("//input[@value='Confirm']").click();
-          details = "Clicked //input[@value='Confirm']";
-          break;
-        case 24:
-          await page.locator("//div[@class='section order-completed']/div[@class='title']/strong").waitFor({ state: 'visible' });
-          details = "Waited for //div[@class='section order-completed']/div[@class='title']/strong";
-          break;
+  if (!testData || !testData.steps || testData.steps.length === 0) {
+    return {
+      "user_test_steps": [],
+      "executed_test_steps": [],
+      "execution_results": [],
+      "summary": {
+        "total_steps": 0,
+        "passed": 0,
+        "failed": 0,
+        "duration_ms": 0
       }
-    } catch (error: any) {
-      status = 'error';
-      details = error.message;
-      failed++;
-      failureOccurs = true;
-      const endTime = performance.now();
-      const duration = endTime - startTime;
-      totalDuration += duration;
-
-      executedSteps.push(userTestSteps[i]);
-      executionResults.push({
-        step: step,
-        status: status,
-        details: details,
-        timestamp: new Date().toISOString(),
-        duration_ms: duration
-      });
-
-      await browser.close();
-
-      const summary = {
-        total_steps: userTestSteps.length,
-        passed: i - failed,
-        failed: failed,
-        duration_ms: totalDuration
-      };
-
-      return {
-        user_test_steps: userTestSteps,
-        executed_test_steps: executedSteps,
-        execution_results: executionResults,
-        summary: summary
-      };
-    }
-
-    const endTime = performance.now();
-    const duration = endTime - startTime;
-    totalDuration += duration;
-
-    executedSteps.push(userTestSteps[i]);
-    executionResults.push({
-      step: step,
-      status: status,
-      details: details,
-      timestamp: new Date().toISOString(),
-      duration_ms: duration
-    });
-
-    if (status === 'success') {
-      passed++;
-    } else {
-      failed++;
-    }
+    };
   }
 
-  await browser.close();
+  let browser: Browser | null = null;
+  let page: Page | null = null;
+  let context: BrowserContext | null = null;
 
-  const summary = {
-    total_steps: userTestSteps.length,
-    passed: passed,
-    failed: failed,
-    duration_ms: totalDuration
-  };
+  try {
+    browser = await chromium.launch({
+      headless: false,
+      slowMo: 1000,
+      args: [
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        '--disable-dev-shm-usage',
+        '--disable-web-security',
+        '--disable-features=VizDisplayCompositor'
+      ]
+    });
+    context = await browser.newContext({ viewport: { width: 1280, height: 720 } });
+    page = await context.newPage();
 
-  return {
-    user_test_steps: userTestSteps,
-    executed_test_steps: executedSteps,
-    execution_results: executionResults,
-    summary: summary
-  };
+    for (const step of testData.steps) {
+      const startTime = performance.now();
+      let status = "passed";
+      let details = "";
+      let error = null;
+
+      try {
+        switch (step.action) {
+          case "goto":
+            await page.goto(step.value, { waitUntil: 'domcontentloaded', timeout: step.waitTimeoutMs });
+            details = `Navigated to ${step.value}`;
+            break;
+          case "click":
+            await page.locator(step.selector).click({ timeout: step.waitTimeoutMs });
+            details = `Clicked ${step.selector}`;
+            break;
+          case "fill":
+            await page.locator(step.selector).fill(step.value, { timeout: step.waitTimeoutMs });
+            details = `Filled ${step.selector}`;
+            break;
+          case "check":
+            await page.locator(step.selector).check({ timeout: step.waitTimeoutMs });
+            details = `Checked ${step.selector}`;
+            break;
+          case "uncheck":
+            await page.locator(step.selector).uncheck({ timeout: step.waitTimeoutMs });
+            details = `Unchecked ${step.selector}`;
+            break;
+          case "hover":
+            await page.locator(step.selector).hover({ timeout: step.waitTimeoutMs });
+            details = `Hovered ${step.selector}`;
+            break;
+          case "waitFor":
+            await page.locator(step.selector).waitFor({ timeout: step.waitTimeoutMs });
+            details = `Waited for ${step.selector}`;
+            break;
+          case "isVisible":
+            const isVisible = await page.locator(step.selector).isVisible({ timeout: step.waitTimeoutMs });
+            details = `Element ${step.selector} is ${isVisible ? "visible" : "not visible"}`;
+            if (!isVisible) {
+              throw new Error(`Element ${step.selector} is not visible`);
+            }
+            break;
+          default:
+            throw new Error(`Unknown action: ${step.action}`);
+        }
+        passedCount++;
+      } catch (e: any) {
+        status = "error";
+        error = e.message;
+        failedCount++;
+      }
+
+      const endTime = performance.now();
+      const durationMs = endTime - startTime;
+      totalDuration += durationMs;
+
+      executedSteps.push(step.stepDescription);
+      executionResults.push({
+        step: step.stepDescription,
+        status: status,
+        details: details,
+        error: error,
+        timestamp: new Date().toISOString(),
+        duration_ms: durationMs
+      });
+
+      if (status === "error") {
+        break; // Stop execution on error
+      }
+    }
+  } catch (e: any) {
+    // Handle any errors during browser launch or context creation
+    executedSteps.push("Setup failed");
+    executionResults.push({
+      step: "Setup",
+      status: "error",
+      details: "Browser setup failed",
+      error: e.message,
+      timestamp: new Date().toISOString(),
+      duration_ms: 0
+    });
+    failedCount++;
+  } finally {
+    if (browser) {
+      try {
+        await browser.close();
+      } catch (e) {
+        console.error("Error closing browser:", e);
+      }
+    }
+
+    const summary = {
+      total_steps: userTestSteps.length,
+      passed: passedCount,
+      failed: failedCount,
+      duration_ms: totalDuration
+    };
+
+    return {
+      "user_test_steps": userTestSteps,
+      "executed_test_steps": executedSteps,
+      "execution_results": executionResults,
+      "summary": summary
+    };
+  }
 });
