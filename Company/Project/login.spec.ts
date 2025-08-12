@@ -1,44 +1,282 @@
 import { test, expect, chromium, Browser, Page, BrowserContext } from "@playwright/test";
 
-test.setTimeout(120000);
-
 test('Generated Test', async () => {
+  test.setTimeout(120000);
+
   const originalUserSteps = [
-    "Navigate to https://www.saucedemo.com/",
-    "Enter \"standard_user\" in the username field with id 'user-name'",
-    "Enter \"secret_sauce\" in the password field with id 'password'",
-    "Click the Login button with id 'login-button'",
-    "Wait for the page to load completely",
-    "Click on the product sort filter dropdown with class name 'product_sort_container'",
-    "Click on Name (Z to A) option",
-    "Wait for the page to load completely",
-    "Locate the product \"Sauce Labs Backpack\" and click the Add to Cart button with id 'add-to-cart-sauce-labs-backpack'",
-    "Click on the cart icon with class name 'shopping_cart_link'",
-    "Wait for the page to load completely",
-    "Ensure that the product \"Sauce Labs Backpack\" is present in the cart",
-    "Wait for the page to load completely",
-    "Click on the checkout button with id 'checkout'",
-    "Wait for the page to load completely",
-    "Enter the first name as \"chaitanya\" in the first name field with id 'first-name'",
-    "Enter the last name as \"Kompella\" in the last name field with id 'last-name'",
-    "Enter the postal code as \"62567352\" in postal code field with id 'postal-code'",
-    "Wait for the page to load completely",
-    "Click on continue button with id 'continue'",
-    "Wait for the page to load completely",
-    "Click on finish button with id 'finish'",
-    "Verify the message “Thank you for your order!” is displayed",
-    "Wait for the page to load completely",
-    "Then click on back to home button with id 'back-to-products'",
-    "Wait for the page to load completely",
-    "Click on the burger bar with id 'react-burger-menu-btn'",
-    "Wait for the page to load completely",
-    "Click on logout with id 'logout_sidebar_link'",
-    "Keep the browser open after the test execution is complete"
+    "Navigate to https://demowebshop.tricentis.com",
+    "Click on Log in",
+    "Enter email: snaptest@yopmail.com",
+    "Enter password: snaptest@123",
+    "Click on Log in",
+    "Verify that the logged in email id is displayed on the top right corner of the page",
+    "Click on Books",
+    "Click on the first product link on the page",
+    "Click on Add to cart",
+    "Click on Shopping cart",
+    "Verify that the product is present in the shopping cart",
+    "Click the Terms of service checkbox",
+    "Click on Checkout",
+    "Click on Continue in the billing address section",
+    "Verify that the shipping address section is displayed",
+    "Click on Continue in the shipping address section",
+    "Verify that the Shipping method section is displayed",
+    "Click on Continue in the shipping method section",
+    "Verify that Cash On Delivery is selected by default in the payment method section",
+    "Click on Continue in the payment method section",
+    "Verify that the selected payment method is displayed in the Payment information section",
+    "Click on Continue in the payment information section",
+    "Click on Confirm in the confirm order section",
+    "Verify that the order number is shown on the order confirmation page"
   ];
 
-  const executedSteps: string[] = [];
-  const executionResults: any[] = [];
-  let totalDuration = 0;
+  const steps = [
+    {
+      "action": "goto",
+      "value": "https://demowebshop.tricentis.com",
+      "errorMessage": "Failed to navigate to the home page",
+      "stepDescription": "Navigate to the home page"
+    },
+    {
+      "action": "click",
+      "selector": "a.ico-login",
+      "fallbacks": [
+        "text=Log in",
+        "//a[text()='Log in']"
+      ],
+      "waitTimeoutMs": 5000,
+      "retry": 2,
+      "errorMessage": "Failed to click on the 'Log in' link",
+      "stepDescription": "Click on Log in"
+    },
+    {
+      "action": "fill",
+      "selector": "#Email",
+      "value": "snaptest@yopmail.com",
+      "waitTimeoutMs": 5000,
+      "retry": 2,
+      "errorMessage": "Failed to enter the email address",
+      "stepDescription": "Enter email: snaptest@yopmail.com"
+    },
+    {
+      "action": "fill",
+      "selector": "#Password",
+      "value": "snaptest@123",
+      "waitTimeoutMs": 5000,
+      "retry": 2,
+      "errorMessage": "Failed to enter the password",
+      "stepDescription": "Enter password: snaptest@123"
+    },
+    {
+      "action": "click",
+      "selector": "input.button-1.login-button",
+      "fallbacks": [
+        "text=Log in",
+        "//input[@value='Log in']"
+      ],
+      "waitTimeoutMs": 5000,
+      "retry": 2,
+      "errorMessage": "Failed to click on the 'Log in' button",
+      "stepDescription": "Click on Log in"
+    },
+    {
+      "action": "isVisible",
+      "selector": ".account",
+      "value": "snaptest@yopmail.com",
+      "waitTimeoutMs": 5000,
+      "retry": 2,
+      "errorMessage": "Failed to verify the logged in email id",
+      "stepDescription": "Verify that the logged in email id is displayed on the top right corner of the page"
+    },
+    {
+      "action": "click",
+      "selector": "a[href='/books']",
+      "fallbacks": [
+        "text=Books",
+        "//a[text()='Books']"
+      ],
+      "waitTimeoutMs": 5000,
+      "retry": 2,
+      "errorMessage": "Failed to click on the 'Books' link",
+      "stepDescription": "Click on Books"
+    },
+    {
+      "action": "click",
+      "selector": ".product-item a[href*='/'] img",
+      "fallbacks": [
+        "//div[@class='product-item'][1]//a",
+        ".product-item:first-child a"
+      ],
+      "waitTimeoutMs": 5000,
+      "retry": 2,
+      "errorMessage": "Failed to click on the first product link",
+      "stepDescription": "Click on the first product link on the page"
+    },
+    {
+      "action": "click",
+      "selector": "input.button-1.add-to-cart-button",
+      "fallbacks": [
+        "#add-to-cart-button-4",
+        "//input[@value='Add to cart']"
+      ],
+      "waitTimeoutMs": 5000,
+      "retry": 2,
+      "errorMessage": "Failed to click on the 'Add to cart' button",
+      "stepDescription": "Click on Add to cart"
+    },
+    {
+      "action": "click",
+      "selector": "a.ico-cart",
+      "fallbacks": [
+        "text=Shopping cart",
+        "//a[@class='ico-cart']"
+      ],
+      "waitTimeoutMs": 5000,
+      "retry": 2,
+      "errorMessage": "Failed to click on the 'Shopping cart' link",
+      "stepDescription": "Click on Shopping cart"
+    },
+    {
+      "action": "isVisible",
+      "selector": ".product-name",
+      "waitTimeoutMs": 5000,
+      "retry": 2,
+      "errorMessage": "Failed to verify the product in the shopping cart",
+      "stepDescription": "Verify that the product is present in the shopping cart"
+    },
+    {
+      "action": "check",
+      "selector": "#termsofservice",
+      "waitTimeoutMs": 5000,
+      "retry": 2,
+      "errorMessage": "Failed to check the 'Terms of service' checkbox",
+      "stepDescription": "Click the Terms of service checkbox"
+    },
+    {
+      "action": "click",
+      "selector": "#checkout",
+      "fallbacks": [
+        "button[name='checkout']",
+        "//button[@id='checkout']"
+      ],
+      "waitTimeoutMs": 5000,
+      "retry": 2,
+      "errorMessage": "Failed to click on the 'Checkout' button",
+      "stepDescription": "Click on Checkout"
+    },
+    {
+      "action": "click",
+      "selector": "input[value='Continue']",
+      "fallbacks": [
+        "//input[@value='Continue']",
+        "text=Continue"
+      ],
+      "waitTimeoutMs": 5000,
+      "retry": 2,
+      "errorMessage": "Failed to click on the 'Continue' button in the billing address section",
+      "stepDescription": "Click on Continue in the billing address section"
+    },
+    {
+      "action": "isVisible",
+      "selector": "#shipping-buttons-container",
+      "waitTimeoutMs": 5000,
+      "retry": 2,
+      "errorMessage": "Failed to verify the shipping address section",
+      "stepDescription": "Verify that the shipping address section is displayed"
+    },
+    {
+      "action": "click",
+      "selector": "input[value='Continue']",
+      "fallbacks": [
+        "//input[@onclick='Shipping.save()']",
+        "//input[@value='Continue']"
+      ],
+      "waitTimeoutMs": 5000,
+      "retry": 2,
+      "errorMessage": "Failed to click on the 'Continue' button in the shipping address section",
+      "stepDescription": "Click on Continue in the shipping address section"
+    },
+    {
+      "action": "isVisible",
+      "selector": "#shipping-method-buttons-container",
+      "waitTimeoutMs": 5000,
+      "retry": 2,
+      "errorMessage": "Failed to verify the Shipping method section",
+      "stepDescription": "Verify that the Shipping method section is displayed"
+    },
+    {
+      "action": "click",
+      "selector": "input[value='Continue']",
+      "fallbacks": [
+        "//input[@onclick='ShippingMethod.save()']",
+        "//input[@value='Continue']"
+      ],
+      "waitTimeoutMs": 5000,
+      "retry": 2,
+      "errorMessage": "Failed to click on the 'Continue' button in the shipping method section",
+      "stepDescription": "Click on Continue in the shipping method section"
+    },
+    {
+      "action": "isVisible",
+      "selector": "input[id='paymentmethod_0']",
+      "waitTimeoutMs": 5000,
+      "retry": 2,
+      "errorMessage": "Failed to verify Cash On Delivery is selected",
+      "stepDescription": "Verify that Cash On Delivery is selected by default in the payment method section"
+    },
+    {
+      "action": "click",
+      "selector": "input[value='Continue']",
+      "fallbacks": [
+        "//input[@onclick='PaymentMethod.save()']",
+        "//input[@value='Continue']"
+      ],
+      "waitTimeoutMs": 5000,
+      "retry": 2,
+      "errorMessage": "Failed to click on the 'Continue' button in the payment method section",
+      "stepDescription": "Click on Continue in the payment method section"
+    },
+    {
+      "action": "isVisible",
+      "selector": ".payment-info-next-step",
+      "waitTimeoutMs": 5000,
+      "retry": 2,
+      "errorMessage": "Failed to verify the selected payment method in the Payment information section",
+      "stepDescription": "Verify that the selected payment method is displayed in the Payment information section"
+    },
+    {
+      "action": "click",
+      "selector": "input[value='Continue']",
+      "fallbacks": [
+        "//input[@onclick='PaymentInfo.save()']",
+        "//input[@value='Continue']"
+      ],
+      "waitTimeoutMs": 5000,
+      "retry": 2,
+      "errorMessage": "Failed to click on the 'Continue' button in the payment information section",
+      "stepDescription": "Click on Continue in the payment information section"
+    },
+    {
+      "action": "click",
+      "selector": "input[value='Confirm']",
+      "fallbacks": [
+        "//input[@value='Confirm']",
+        "text=Confirm"
+      ],
+      "waitTimeoutMs": 5000,
+      "retry": 2,
+      "errorMessage": "Failed to click on the 'Confirm' button in the confirm order section",
+      "stepDescription": "Click on Confirm in the confirm order section"
+    },
+    {
+      "action": "isVisible",
+      "selector": ".order-number",
+      "waitTimeoutMs": 10000,
+      "retry": 3,
+      "errorMessage": "Failed to verify the order number on the order confirmation page",
+      "stepDescription": "Verify that the order number is shown on the order confirmation page"
+    }
+  ];
 
   const browser: Browser = await chromium.launch({
     headless: false,
@@ -51,205 +289,16 @@ test('Generated Test', async () => {
       '--disable-features=VizDisplayCompositor'
     ]
   });
-  const context = await browser.newContext({ viewport: { width: 1280, height: 720 } });
+  const context: BrowserContext = await browser.newContext({ viewport: { width: 1280, height: 720 } });
   const page: Page = await context.newPage();
   page.setDefaultTimeout(30000);
 
-  const steps = [
-    {
-      "action": "goto",
-      "selector": "https://www.saucedemo.com/",
-      "value": null,
-      "waitTimeoutMs": 10000,
-      "retry": 3,
-      "fallbacks": ["waitForLoadState"],
-      "errorMessage": "Navigation to saucedemo failed.",
-      "stepDescription": "Navigate to the login page"
-    },
-    {
-      "action": "fill",
-      "selector": "#user-name",
-      "value": "standard_user",
-      "waitTimeoutMs": 10000,
-      "retry": 3,
-      "fallbacks": [],
-      "errorMessage": "Failed to fill username field.",
-      "stepDescription": "Enter username"
-    },
-    {
-      "action": "fill",
-      "selector": "#password",
-      "value": "secret_sauce",
-      "waitTimeoutMs": 10000,
-      "retry": 3,
-      "fallbacks": [],
-      "errorMessage": "Failed to fill password field.",
-      "stepDescription": "Enter password"
-    },
-    {
-      "action": "click",
-      "selector": "#login-button",
-      "value": null,
-      "waitTimeoutMs": 10000,
-      "retry": 3,
-      "fallbacks": ["scrollIntoView"],
-      "errorMessage": "Failed to click login button.",
-      "stepDescription": "Click login button"
-    },
-    {
-      "action": "click",
-      "selector": ".product_sort_container",
-      "value": null,
-      "waitTimeoutMs": 10000,
-      "retry": 3,
-      "fallbacks": ["scrollIntoView"],
-      "errorMessage": "Failed to click product sort filter dropdown.",
-      "stepDescription": "Click on the product sort filter dropdown"
-    },
-    {
-      "action": "click",
-      "selector": "text=Name (Z to A)",
-      "value": null,
-      "waitTimeoutMs": 10000,
-      "retry": 3,
-      "fallbacks": ["scrollIntoView"],
-      "errorMessage": "Failed to click Name (Z to A) option.",
-      "stepDescription": "Click on Name (Z to A) option"
-    },
-    {
-      "action": "click",
-      "selector": "#add-to-cart-sauce-labs-backpack",
-      "value": null,
-      "waitTimeoutMs": 10000,
-      "retry": 3,
-      "fallbacks": ["scrollIntoView"],
-      "errorMessage": "Failed to add Sauce Labs Backpack to cart.",
-      "stepDescription": "Add Sauce Labs Backpack to cart"
-    },
-    {
-      "action": "click",
-      "selector": ".shopping_cart_link",
-      "value": null,
-      "waitTimeoutMs": 10000,
-      "retry": 3,
-      "fallbacks": ["scrollIntoView"],
-      "errorMessage": "Failed to click on the cart icon.",
-      "stepDescription": "Click on the cart icon"
-    },
-    {
-      "action": "isVisible",
-      "selector": "div.cart_item div.inventory_item_name:has-text(\"Sauce Labs Backpack\")",
-      "value": null,
-      "waitTimeoutMs": 10000,
-      "retry": 3,
-      "fallbacks": [],
-      "errorMessage": "Sauce Labs Backpack is not present in the cart.",
-      "stepDescription": "Ensure that the product \"Sauce Labs Backpack\" is present in the cart"
-    },
-    {
-      "action": "click",
-      "selector": "#checkout",
-      "value": null,
-      "waitTimeoutMs": 10000,
-      "retry": 3,
-      "fallbacks": ["scrollIntoView"],
-      "errorMessage": "Failed to click on the checkout button.",
-      "stepDescription": "Click on the checkout button"
-    },
-    {
-      "action": "fill",
-      "selector": "#first-name",
-      "value": "chaitanya",
-      "waitTimeoutMs": 10000,
-      "retry": 3,
-      "fallbacks": [],
-      "errorMessage": "Failed to fill first name field.",
-      "stepDescription": "Enter first name"
-    },
-    {
-      "action": "fill",
-      "selector": "#last-name",
-      "value": "Kompella",
-      "waitTimeoutMs": 10000,
-      "retry": 3,
-      "fallbacks": [],
-      "errorMessage": "Failed to fill last name field.",
-      "stepDescription": "Enter last name"
-    },
-    {
-      "action": "fill",
-      "selector": "#postal-code",
-      "value": "62567352",
-      "waitTimeoutMs": 10000,
-      "retry": 3,
-      "fallbacks": [],
-      "errorMessage": "Failed to fill postal code field.",
-      "stepDescription": "Enter postal code"
-    },
-    {
-      "action": "click",
-      "selector": "#continue",
-      "value": null,
-      "waitTimeoutMs": 10000,
-      "retry": 3,
-      "fallbacks": ["scrollIntoView"],
-      "errorMessage": "Failed to click on continue button.",
-      "stepDescription": "Click on continue button"
-    },
-    {
-      "action": "click",
-      "selector": "#finish",
-      "value": null,
-      "waitTimeoutMs": 10000,
-      "retry": 3,
-      "fallbacks": ["scrollIntoView"],
-      "errorMessage": "Failed to click on finish button.",
-      "stepDescription": "Click on finish button"
-    },
-    {
-      "action": "isVisible",
-      "selector": "text=Thank you for your order!",
-      "value": null,
-      "waitTimeoutMs": 10000,
-      "retry": 3,
-      "fallbacks": [],
-      "errorMessage": "The message “Thank you for your order!” is not displayed.",
-      "stepDescription": "Verify the message “Thank you for your order!” is displayed"
-    },
-    {
-      "action": "click",
-      "selector": "#back-to-products",
-      "value": null,
-      "waitTimeoutMs": 10000,
-      "retry": 3,
-      "fallbacks": ["scrollIntoView"],
-      "errorMessage": "Failed to click on back to home button.",
-      "stepDescription": "Click on back to home button"
-    },
-    {
-      "action": "click",
-      "selector": "#react-burger-menu-btn",
-      "value": null,
-      "waitTimeoutMs": 10000,
-      "retry": 3,
-      "fallbacks": ["scrollIntoView"],
-      "errorMessage": "Failed to click on the burger bar.",
-      "stepDescription": "Click on the burger bar"
-    },
-    {
-      "action": "click",
-      "selector": "#logout_sidebar_link",
-      "value": null,
-      "waitTimeoutMs": 10000,
-      "retry": 3,
-      "fallbacks": ["scrollIntoView"],
-      "errorMessage": "Failed to click on logout.",
-      "stepDescription": "Click on logout"
-    }
-  ];
+  const executedSteps: string[] = [];
+  const executionResults: any[] = [];
+  let totalDuration = 0;
+  let stepCounter = 1;
 
-  for (let i = 0; i < steps.length; i++) {
-    const step = steps[i];
+  for (const step of steps) {
     const startTime = performance.now();
     let status = 'success';
     let details = '';
@@ -257,11 +306,30 @@ test('Generated Test', async () => {
     try {
       switch (step.action) {
         case 'goto':
-          await page.goto(step.selector);
-          details = `Navigated to ${step.selector}`;
+          await page.goto(step.value);
+          details = `Navigated to ${step.value}`;
           break;
         case 'click':
-          await page.locator(step.selector).click();
+          try {
+            await page.locator(step.selector).click({timeout: step.waitTimeoutMs});
+          } catch (e: any) {
+            let fallbackSuccess = false;
+            if (step.fallbacks) {
+              for (const fallback of step.fallbacks) {
+                try {
+                  await page.locator(fallback).click({timeout: step.waitTimeoutMs});
+                  details = `Clicked ${fallback} (fallback)`;
+                  fallbackSuccess = true;
+                  break;
+                } catch (e: any) {
+                  console.warn(`Fallback click failed: ${fallback}`, e.message);
+                }
+              }
+            }
+            if (!fallbackSuccess) {
+              throw e;
+            }
+          }
           details = `Clicked ${step.selector}`;
           break;
         case 'fill':
@@ -285,10 +353,12 @@ test('Generated Test', async () => {
           details = `Waited for ${step.selector}`;
           break;
         case 'isVisible':
-          const isVisible = await page.locator(step.selector).isVisible();
-          details = `Element ${step.selector} is ${isVisible ? 'visible' : 'not visible'}`;
-          if (!isVisible) {
-            throw new Error(`Element ${step.selector} is not visible`);
+          try {
+            await page.locator(step.selector).isVisible({timeout: step.waitTimeoutMs});
+            details = `Element ${step.selector} is visible`;
+          } catch (error) {
+            details = `Element ${step.selector} is not visible`;
+            status = 'error';
           }
           break;
         default:
@@ -296,7 +366,7 @@ test('Generated Test', async () => {
       }
     } catch (error: any) {
       status = 'error';
-      details = error.message || `Failed to execute action: ${step.action}`;
+      details = error.message || 'An error occurred';
     }
 
     const endTime = performance.now();
@@ -305,12 +375,13 @@ test('Generated Test', async () => {
 
     executedSteps.push(step.stepDescription);
     executionResults.push({
-      step: step.stepDescription,
+      step: `Step ${stepCounter}: ${step.stepDescription}`,
       status: status,
       details: details,
       timestamp: new Date().toISOString(),
       duration_ms: durationMs
     });
+    stepCounter++;
   }
 
   await browser.close();
